@@ -83,7 +83,7 @@ export default function LeadDialog({ open, onOpenChange }) {
               </DialogDescription>
             </DialogHeader>
 
-            <form onSubmit={onSubmit} className="px-7 pb-7 pt-4 space-y-4" data-testid="lead-form">
+            <form onSubmit={onSubmit} noValidate className="px-7 pb-7 pt-4 space-y-4" data-testid="lead-form">
               <Field label="Full name" id="name" error={errors.name}>
                 <Input
                   id="name"
