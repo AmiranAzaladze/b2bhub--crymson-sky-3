@@ -1,0 +1,101 @@
+{
+  "theme": "light",
+  "archetype": "Archetype 4: Swiss & High-Contrast",
+  "vibe": "Linear-like, highly technical, minimal, premium B2B SaaS. Flat hierarchy, ruthless clarity, motion without bloat.",
+  "typography": {
+    "headings": {
+      "font_family": "Outfit",
+      "font_import": "@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');",
+      "classes": "font-['Outfit',sans-serif] tracking-tight text-neutral-950"
+    },
+    "body": {
+      "font_family": "Manrope",
+      "font_import": "@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600&display=swap');",
+      "classes": "font-['Manrope',sans-serif] leading-relaxed text-neutral-600"
+    },
+    "mono": {
+      "font_family": "JetBrains Mono",
+      "font_import": "@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');",
+      "classes": "font-['JetBrains_Mono',monospace] text-sm tracking-tight"
+    }
+  },
+  "colors": {
+    "background": "#FAFAFA",
+    "surface": "#FFFFFF",
+    "surface_glass": "rgba(255, 255, 255, 0.7)",
+    "text_primary": "#0A0A0A",
+    "text_secondary": "#52525B",
+    "accent_primary": "#0A0A0A",
+    "accent_secondary": "#2563EB",
+    "border_subtle": "#E5E7EB",
+    "border_dark": "#27272A"
+  },
+  "layout_and_spacing": {
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "section_padding": "py-24 md:py-32 lg:py-40",
+    "bento_grid": "grid-cols-1 md:grid-cols-12 gap-6 md:gap-8",
+    "optical_alignment": "Ensure icons and text align perfectly on their baseline/center. Use 1px borders to separate content zones (technical grid style)."
+  },
+  "component_instructions": {
+    "Header": {
+      "strategy": "Crystal Glassmorphism",
+      "classes": "sticky top-0 z-50 backdrop-blur-xl bg-white/70 border-b border-neutral-200/50",
+      "details": "Include 'Swift Formations' logo (text based, Outfit font, bold), Nav links, and a solid black CTA 'Start Now'."
+    },
+    "Hero": {
+      "strategy": "Asymmetric Technical Minimalism",
+      "details": "No centered text. Left-aligned huge H1 (text-5xl md:text-6xl tracking-tighter). Below H1, integrate the interactive Company Name Checker (Shadcn Input + Button). Background should not be a photo. Use CSS grid lines (repeating-linear-gradient) or a subtle mesh gradient to create a technical environment. Include Trustpilot and B-Corp mentions as small, muted text tags."
+    },
+    "Company_Name_Checker": {
+      "strategy": "Functional Form",
+      "details": "Use Shadcn Form/Input. Input field for company name, dropdown for extension (optional, .ltd, .co.uk), and submit button. Mock a loading state (setTimeout 1.5s) then display a success/availability message."
+    },
+    "How_It_Works": {
+      "strategy": "Code-like Timeline",
+      "details": "3 steps (Name Check -> Details -> Documents). Use JetBrains Mono for step numbers (01, 02, 03). Use a horizontal flex layout with connecting 1px lines."
+    },
+    "Pricing": {
+      "strategy": "Swiss Grid / Cards",
+      "details": "3 tiers (Essential £12.99, Privacy £39.99, All-Inclusive £89.99). The Privacy tier should have a black background (inverse) with white text. Others have white background with 1px border. Use Lucide icons for checkmarks. Include 'Most Popular' badge."
+    },
+    "Benefits": {
+      "strategy": "Bento Grid (Tetris Mode)",
+      "details": "col-span-12 md:col-span-8 for primary benefit (Speed & Compliance). col-span-12 md:col-span-4 for secondary (Privacy). Use flat backgrounds, sharp 1px borders. No heavy shadows."
+    },
+    "Testimonials": {
+      "strategy": "Clean Grid",
+      "details": "3 columns. Quote text in Manrope, Name in Outfit, Role in JetBrains Mono. Use provided testimonial images for avatars."
+    },
+    "FAQ": {
+      "strategy": "Shadcn Accordion",
+      "details": "Narrow container (max-w-3xl) centered. No box shadows. Simple 1px bottom borders for each item."
+    },
+    "Footer": {
+      "strategy": "Dark Contrast Shift",
+      "details": "Background #0A0A0A, text #FAFAFA. Massive spacing (py-32). Massive brand text 'SWIFT FORMATIONS' at the bottom."
+    }
+  },
+  "media": {
+    "testimonial_images": [
+      {
+        "url": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTN8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMGhlYWRzaG90JTIwcG9ydHJhaXR8ZW58MHx8fHwxNzc4NzQ0NzA2fDA&ixlib=rb-4.1.0&q=85",
+        "alt": "Sarah Jenkins - Tech Founder"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1600878459138-e1123b37cb30?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTN8MHwxfHNlYXJjaHw0fHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMGhlYWRzaG90JTIwcG9ydHJhaXR8ZW58MHx8fHwxNzc4NzQ0NzA2fDA&ixlib=rb-4.1.0&q=85",
+        "alt": "David Chen - Freelance Consultant"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1685760259914-ee8d2c92d2e0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTN8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMGhlYWRzaG90JTIwcG9ydHJhaXR8ZW58MHx8fHwxNzc4NzQ0NzA2fDA&ixlib=rb-4.1.0&q=85",
+        "alt": "Emma Thompson - E-commerce Owner"
+      }
+    ]
+  },
+  "technical_rules": [
+    "Use ONLY JavaScript (.js / .jsx), DO NOT use TypeScript (.ts / .tsx).",
+    "All interactive elements MUST include data-testid (e.g., data-testid='hero-cta-button').",
+    "Use lucide-react for all icons (e.g., CheckCircle, ArrowRight, Shield).",
+    "Use tailwindcss for styling. No custom CSS unless absolutely necessary.",
+    "Use framer-motion for micro-interactions (hover, click, simple scroll fades)."
+  ]
+}
