@@ -1,0 +1,36 @@
+{
+  "summary": "Frontend-only E2E testing of Swift Formations landing page completed. 23/24 critical interactions PASS. No console errors. All anchor navigation, lead dialog flows, name checker mock logic, pricing CTAs, FAQ accordion, countdown decrement, footer, and mobile menu work as specified. One minor validation defect found: HTML5 native email validation on the lead form's email input intercepts submit before custom JS validator runs, so the custom 'Invalid email' error message never appears for malformed (non-empty) emails.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "LeadDialog (email field)",
+        "issue": "Input has type=\"email\" which triggers native browser validation. When user submits with an invalid email like 'notanemail', the browser blocks submit and the custom 'Invalid email' error span from validate() never renders. Custom error UI is unreachable for the 'invalid format' branch. Recommended fix: add noValidate to the <form> in LeadDialog.js OR change the email Input to type=\"text\" so the custom validate() can drive the error display consistently with the design system.",
+        "selector": "[data-testid=\"lead-email\"] / [data-testid=\"lead-form\"]",
+        "priority": "MEDIUM"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [
+    "Add noValidate to <form> in /app/frontend/src/components/landing/LeadDialog.js (or switch lead-email Input to type=\"text\") so the custom 'Invalid email' error renders when the user submits a malformed email."
+  ],
+  "critical_code_review_comments": [
+    "LeadDialog.js: relying on type=\"email\" alongside a custom validator causes inconsistent UX — native tooltip fires before JS validation. Pick one mechanism.",
+    "Hero.js name-checker submit clears status to 'idle' on input change, but errors from previous loading run aren't cleared if the user mid-types during loading — minor.",
+    "All interactive elements correctly expose data-testid (header CTA, hero CTAs, name-checker, pricing tier CTAs, faq-item-N, countdown, final-cta, lead-* fields, footer). Good test coverage hooks."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A (skipped)", "frontend": "96% (23/24 checks)"},
+  "test_credentials": "N/A - no auth in app",
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "All flows verified except invalid-email custom error display in LeadDialog. After fix, re-run the lead-dialog flow: open via [data-testid=\"hero-primary-cta\"], submit empty -> expect 'Required'; submit with email='notanemail' name='X' phone='Y' -> expect 'Invalid email' rendered next to email label; submit valid -> [data-testid=\"lead-success\"] visible. Public URL: https://easy-uk-register.preview.emergentagent.com",
+  "rca_of_the_issue": "The <Input type=\"email\"> element in LeadDialog.js triggers HTML5 constraint validation on submit. Because the form button is type=\"submit\", the browser intercepts the submit event for invalid emails and shows its own tooltip — onSubmit handler (and therefore validate()) never executes for that branch. Reproduction: open lead dialog, fill name and phone, enter 'notanemail' as email, click submit; observe native browser bubble and absence of any '.text-red-600 Invalid email' span. Mitigation: add the noValidate attribute on the <form> (preferred to keep email keyboard on mobile) or change type to 'text'."
+}
