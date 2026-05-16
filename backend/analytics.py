@@ -185,7 +185,8 @@ async def ingest_events(db, batch: List[Dict[str, Any]], headers: Dict[str, str]
     ua_info = parse_ua(ua)
     now_iso = datetime.now(timezone.utc).isoformat()
     docs: List[Dict[str, Any]] = []
-    seen_ip_to_enrich = set()
+    seen_ip_to_enrich: set = set()
+    cached_map: Dict[str, Dict[str, Any]] = {}
     for ev in batch:
         if not isinstance(ev, dict):
             continue
@@ -225,7 +226,6 @@ async def ingest_events(db, batch: List[Dict[str, Any]], headers: Dict[str, str]
         return 0
     # First-pass: stamp geo from cache (sync), schedule async enrichment for misses
     if seen_ip_to_enrich:
-        cached_map = {}
         async for c in db.ip_geo.find({"ip": {"$in": list(seen_ip_to_enrich)}}, {"_id": 0}):
             cached_map[c["ip"]] = c
         for d in docs:

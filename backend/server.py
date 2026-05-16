@@ -515,7 +515,7 @@ async def admin_b2bhub(country_code: str, user: Dict[str, Any] = Depends(get_cur
 
 # ─── Analytics: public ingest ───
 class TrackBatch(BaseModel):
-    events: List[Dict[str, Any]] = Field(default_factory=list)
+    events: List[Any] = Field(default_factory=list)
 
 
 @api.post("/track")

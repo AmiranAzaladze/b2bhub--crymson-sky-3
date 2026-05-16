@@ -1,57 +1,60 @@
-# Swift Formations — Multi-Tenant CMS PRD
+# Swift Formations — Multi-Tenant CMS + Analytics
 
-## Original Problem Statement
-Single admin panel managing landing pages for many countries. Each country has its own domain
-(ukcompanyformation.com, ukraineformations.com, …). One shared template — design changes
-propagate to all sites; content is per-country. Logo abbreviation auto-generated from brand
-name. Company-formation data from b2bhub.ltd. Deploy via GitHub → Railway.
+## Original Problem
+Single admin panel managing landing pages for many countries (own domain each), shared template, auto-generated logo, B2BHub.ltd data, deploy GitHub → Railway. Plus a full analytics dashboard.
 
-## User Choices
-- Stack: React SPA + FastAPI + MongoDB (Next.js port deferred)
-- Admin: `admin@swiftformations.io` / `Admin@12345`
-- B2BHub: **MOCKED** (real key + endpoint to be plugged in later)
-- Seeded countries: UK, Ukraine, Germany, France, USA
-- Deployment target: GitHub → Railway, multi-domain on one service
+## Stack
+- React SPA (CRA) + FastAPI + MongoDB
+- Auth: JWT (Bearer + cookie), proxy-aware brute-force lockout
+- Analytics: in-house event tracking (no Google Analytics dependency)
 
-## Architecture (current)
-- `/api/auth/*` JWT (Bearer header + cookie); brute-force lockout (email + ip), proxy-aware via X-Forwarded-For
-- `/api/admin/countries` full CRUD, `/content`, `/publish`, `/unpublish`, `/reset-content`
-- `/api/public/landing?host=…&tenant=…` resolves tenant from domain or slug
-- `/api/admin/b2bhub/:code` proxies MOCKED data (`/app/backend/b2bhub.py`)
-- 5 countries + admin seeded idempotently on startup
-- Frontend resolves tenant from `window.location.hostname` (with `?tenant=` and `/preview/:slug` fallbacks)
-- Auto-logo: `autoAbbreviation(brandName)` shared client+server
+## What's Implemented (Dec 2025)
+### CMS
+- 5 country landings seeded (UK, UA, DE, FR, US), each with own branding/currency/authority/copy
+- Admin (dark mode): login, sidebar w/ country list + status, edit page (General / Content / SEO / B2BHub / Danger), add/delete/publish/reset, auto-logo
+- Public landing resolves tenant by hostname or ?tenant=/preview/:slug
+- B2BHub: MOCKED with refresh button + visible tag
 
-## What's Implemented (2025-12)
-- [x] Auth (login, /me, JWT, lockout)
-- [x] Multi-tenant landing template (Hero / TrustBar / How / Pricing / Benefits / Testimonials / FAQ / Final CTA / Footer / Lead form) — all content-driven
-- [x] Per-country branding (brand color, accent color, currency, authority, logo abbreviation)
-- [x] Admin panel: sidebar country list, dashboard with stats, country edit page
-- [x] Country edit tabs: General · Content · SEO · B2BHub · Danger
-- [x] Section editors for Hero, Trust, How, Pricing tiers (w/ features), Benefits, Testimonials, FAQs, Final CTA, Footer columns
-- [x] Add / delete / publish / unpublish / reset-content
-- [x] B2BHub MOCKED panel with refresh + visible MOCKED tag
-- [x] 5 countries pre-seeded
-- [x] SEO: per-country `<title>` and `<meta description>` rewritten at runtime
+### Analytics
+- **Backend** (`/app/backend/analytics.py`):
+  - `events` collection w/ tenant, visitor_id, session_id, IP, geo, device, OS, browser, UTMs, meta
+  - `ip_geo` cache (ip-api.com, 30d TTL)
+  - `POST /api/track` (public, batched via sendBeacon, schema-tolerant)
+  - `GET /api/admin/analytics/overview|timeseries|breakdown/:dim|rankings|funnel|recent`
+  - `POST/DELETE /api/admin/analytics/seed-demo` (2.5-3k synthetic events over 30d, idempotent)
+- **Frontend** (`/app/frontend/src/lib/analytics.js`):
+  - SDK: visitor_id (forever), session_id (30-min sliding), auto page_view, document-level click delegation on all `data-testid` elements, scroll-depth (25/50/75/100), sendBeacon on visibilitychange/pagehide
+  - Skips `/admin/*` automatically
+  - Manual hooks: `trackLeadOpen`, `trackLeadSubmit`, `trackNameCheck`
+- **Admin Analytics page** (`/admin/analytics`):
+  - Tenant + period selectors
+  - 5 KPI cards (PV, Visitors, Sessions, CTA clicks, Leads) with vs-previous-period delta
+  - Recharts time-series (switchable metric)
+  - Sortable rankings table (any column) with progress bars
+  - 4-step funnel with drop-off %
+  - 8 breakdown panels (countries, cities, device donut, browser, OS, referrers, UTM sources, button clicks)
+  - Live event feed (last 50) with country flag, city, device, browser, IP
 
-## Test Status
-- Iteration 2: backend 25/26 pytest pass, frontend 100% of critical flows.
-- Fixed: proxy-aware brute-force lockout (verified 6th attempt now returns 429).
-- Fixed: Radix Dialog a11y description added.
+## Test Status (iter_3)
+- Backend: 33/33 pytest pass (100%)
+- Frontend: all flows verified visually + DOM
+- Applied 2 safety fixes: tolerant `/api/track` schema, defensive `cached_map` init
 
 ## Backlog
-- P1: Real B2BHub.ltd API integration (replace MOCK in `b2bhub.py`)
-- P1: Migrate to Next.js for SSR per-domain SEO (one-day port)
-- P1: Lead form persistence + admin "Leads" tab
-- P2: Field-level "synced from B2BHub" override indicator with one-click sync
-- P2: Revision history + rollback per country
-- P2: Per-country language (multi-language inside a country)
-- P2: JSON-LD schema injection (FAQPage, Organization, Service)
-- P3: Bulk CSV import "Create 20 countries"
-- P3: Audit log of admin edits
+- P1 Real B2BHub.ltd integration (replace mock)
+- P1 ip-api rate-limit semaphore (45/min free tier)
+- P2 Coalesce admin analytics into single `/dashboard` endpoint (currently 13 parallel calls per refresh)
+- P2 CSV/JSON export from analytics
+- P2 Next.js port for SSR/per-domain SEO
+- P3 Bot filtering / spam guard on /api/track
+- P3 GDPR: IP hashing / last-octet masking toggle
 
-## Next Tasks
-1. Push to GitHub (instructions: see support_agent output earlier)
-2. Deploy on Railway with web + api + mongo services
-3. Attach `ukcompanyformation.com` (and others) as custom domains
-4. Provide real B2BHub credentials → drop into `b2bhub.py` `fetch_b2bhub_data`
+## Credentials & URLs
+- Admin: admin@swiftformations.io / Admin@12345
+- Public preview: `/preview/{uk|ua|de|fr|us}`
+- Analytics: `/admin/analytics`
+
+## Next Actions
+1. Push to GitHub & deploy on Railway (support_agent guide provided earlier)
+2. Attach country domains
+3. Provide real B2BHub credentials when ready
