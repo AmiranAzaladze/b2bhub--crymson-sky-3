@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/client";
+import { initAnalytics, trackLeadOpen, trackLeadSubmit, trackNameCheck } from "../lib/analytics";
 import Header from "../components/landing/Header";
 import Hero from "../components/landing/Hero";
 import TrustBar from "../components/landing/TrustBar";
@@ -74,7 +75,10 @@ export default function Landing() {
   }
 
   const { country, content, b2bhub } = data;
-  const openLead = () => setLeadOpen(true);
+  const openLead = () => {
+    trackLeadOpen("manual");
+    setLeadOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-[#0A0A0A] font-body" data-testid="landing-page">

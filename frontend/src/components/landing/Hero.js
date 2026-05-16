@@ -19,6 +19,7 @@ import {
   XCircle,
   Sparkles,
 } from "lucide-react";
+import { trackNameCheck } from "../../lib/analytics";
 
 const ICONS = { Star, Shield, Users };
 const RESERVED = ["limited", "ltd", "plc", "uk", "test", "demo", "example"];
@@ -46,10 +47,13 @@ export default function Hero({ country, hero, b2bhub, onCTAClick }) {
     setReason("");
     setTimeout(() => {
       const r = checkNameAvailability(name);
-      if (r.ok) setStatus("available");
-      else {
+      if (r.ok) {
+        setStatus("available");
+        trackNameCheck("available");
+      } else {
         setStatus("unavailable");
         setReason(r.reason);
+        trackNameCheck("unavailable");
       }
     }, 1100);
   };

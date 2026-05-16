@@ -5,6 +5,7 @@ import AdminLogin from "./pages/admin/AdminLogin";
 import AdminLayout from "./pages/admin/AdminLayout";
 import AdminCountries from "./pages/admin/AdminCountries";
 import AdminCountryEdit from "./pages/admin/AdminCountryEdit";
+import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { Toaster } from "./components/ui/sonner";
 
@@ -44,6 +45,7 @@ function App() {
               }
             >
               <Route index element={<AdminCountries />} />
+              <Route path="analytics" element={<AdminAnalytics />} />
               <Route path="countries/:id" element={<AdminCountryEdit />} />
             </Route>
 

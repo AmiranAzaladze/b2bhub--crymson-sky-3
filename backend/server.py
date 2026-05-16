@@ -25,6 +25,7 @@ from pydantic import BaseModel, EmailStr, Field
 
 from b2bhub import fetch_b2bhub_data
 from seed_data import SEED_COUNTRIES, auto_abbreviation, default_content_for
+import analytics
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Logging
@@ -253,6 +254,13 @@ async def ensure_indexes() -> None:
     await db.countries.create_index("id", unique=True)
     await db.landing_content.create_index("country_id", unique=True)
     await db.login_attempts.create_index("identifier")
+    # Analytics
+    await db.events.create_index([("tenant_slug", 1), ("ts", -1)])
+    await db.events.create_index([("tenant_slug", 1), ("type", 1), ("ts", -1)])
+    await db.events.create_index("visitor_id")
+    await db.events.create_index("session_id")
+    await db.events.create_index("is_demo")
+    await db.ip_geo.create_index("ip", unique=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -503,6 +511,86 @@ async def reset_content(country_id: str, user: Dict[str, Any] = Depends(get_curr
 @api.get("/admin/b2bhub/{country_code}")
 async def admin_b2bhub(country_code: str, user: Dict[str, Any] = Depends(get_current_user)):
     return await fetch_b2bhub_data(country_code)
+
+
+# ─── Analytics: public ingest ───
+class TrackBatch(BaseModel):
+    events: List[Dict[str, Any]] = Field(default_factory=list)
+
+
+@api.post("/track")
+async def track(payload: TrackBatch, request: Request):
+    inserted = await analytics.ingest_events(
+        db,
+        payload.events or [],
+        dict(request.headers),
+        request.client.host if request.client else "unknown",
+    )
+    return {"ok": True, "received": inserted}
+
+
+# ─── Analytics: admin ───
+@api.get("/admin/analytics/overview")
+async def analytics_overview(
+    period: str = "7d", tenant: Optional[str] = None,
+    user: Dict[str, Any] = Depends(get_current_user),
+):
+    return await analytics.overview(db, tenant, period)
+
+
+@api.get("/admin/analytics/timeseries")
+async def analytics_timeseries(
+    period: str = "7d", tenant: Optional[str] = None,
+    metric: str = "page_views",
+    user: Dict[str, Any] = Depends(get_current_user),
+):
+    return await analytics.timeseries(db, tenant, period, metric)
+
+
+@api.get("/admin/analytics/breakdown/{dimension}")
+async def analytics_breakdown(
+    dimension: str, period: str = "7d", tenant: Optional[str] = None,
+    limit: int = 12,
+    user: Dict[str, Any] = Depends(get_current_user),
+):
+    return await analytics.breakdown(db, tenant, period, dimension, limit)
+
+
+@api.get("/admin/analytics/rankings")
+async def analytics_rankings(
+    period: str = "7d",
+    user: Dict[str, Any] = Depends(get_current_user),
+):
+    return await analytics.rankings(db, period)
+
+
+@api.get("/admin/analytics/funnel")
+async def analytics_funnel(
+    period: str = "7d", tenant: Optional[str] = None,
+    user: Dict[str, Any] = Depends(get_current_user),
+):
+    return await analytics.funnel(db, tenant, period)
+
+
+@api.get("/admin/analytics/recent")
+async def analytics_recent(
+    tenant: Optional[str] = None, limit: int = 100,
+    user: Dict[str, Any] = Depends(get_current_user),
+):
+    return await analytics.recent_events(db, tenant, limit)
+
+
+@api.post("/admin/analytics/seed-demo")
+async def analytics_seed_demo(user: Dict[str, Any] = Depends(get_current_user)):
+    slugs = [c["slug"] async for c in db.countries.find({}, {"slug": 1, "_id": 0})]
+    count = await analytics.seed_demo_events(db, slugs or ["uk"], n_days=30)
+    return {"ok": True, "inserted": count}
+
+
+@api.delete("/admin/analytics/seed-demo")
+async def analytics_clear_demo(user: Dict[str, Any] = Depends(get_current_user)):
+    res = await db.events.delete_many({"is_demo": True})
+    return {"ok": True, "deleted": res.deleted_count}
 
 
 # ─────────────────────────────────────────────────────────────────────────────

@@ -13,6 +13,7 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { trackLeadSubmit } from "../../lib/analytics";
 
 export default function LeadDialog({ open, onOpenChange, country }) {
   const [form, setForm] = React.useState({ name: "", email: "", phone: "", idea: "" });
@@ -51,6 +52,7 @@ export default function LeadDialog({ open, onOpenChange, country }) {
     setTimeout(() => {
       setLoading(false);
       setSuccess(true);
+      trackLeadSubmit();
       toast.success("We'll be in touch within 1 working hour.");
     }, 1000);
   };
