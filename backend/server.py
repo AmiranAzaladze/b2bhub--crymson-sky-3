@@ -93,6 +93,17 @@ async def get_current_user(request: Request) -> Dict[str, Any]:
         raise HTTPException(status_code=401, detail="Invalid token")
 
 
+def _client_ip(request: Request) -> str:
+    """Resolve real client IP, respecting common proxy headers."""
+    xff = request.headers.get("x-forwarded-for", "")
+    if xff:
+        return xff.split(",")[0].strip()
+    real = request.headers.get("x-real-ip", "")
+    if real:
+        return real.strip()
+    return request.client.host if request.client else "unknown"
+
+
 # Brute force guard
 async def check_login_lockout(identifier: str) -> None:
     rec = await db.login_attempts.find_one({"identifier": identifier})
@@ -260,14 +271,20 @@ async def root():
 @api.post("/auth/login")
 async def login(payload: LoginIn, request: Request):
     email = payload.email.lower()
-    ip = request.client.host if request.client else "unknown"
-    identifier = f"{ip}:{email}"
-    await check_login_lockout(identifier)
+    ip = _client_ip(request)
+    # Two-pronged lockout: primarily by email (guarantees the threshold
+    # is reachable behind reverse proxies), secondarily by ip+email.
+    email_key = f"email:{email}"
+    pair_key = f"{ip}:{email}"
+    await check_login_lockout(email_key)
+    await check_login_lockout(pair_key)
     user = await db.users.find_one({"email": email})
     if not user or not verify_password(payload.password, user["password_hash"]):
-        await record_failed_login(identifier)
+        await record_failed_login(email_key)
+        await record_failed_login(pair_key)
         raise HTTPException(status_code=401, detail="Invalid email or password")
-    await clear_failed_login(identifier)
+    await clear_failed_login(email_key)
+    await clear_failed_login(pair_key)
     token = create_access_token(user["id"], user["email"])
     return {
         "token": token,

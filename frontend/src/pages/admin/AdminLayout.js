@@ -9,6 +9,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "../../components/ui/dialog";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
@@ -230,6 +231,10 @@ function AddCountryDialog({ open, onOpenChange, onCreated }) {
           <DialogTitle className="font-display text-[24px] font-bold tracking-tight">
             Add a country landing
           </DialogTitle>
+          <DialogDescription className="text-[13px] text-neutral-500 mt-1">
+            Create a new country. Default content will be generated automatically — you can edit
+            everything afterwards.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={submit} noValidate className="px-7 pb-7 pt-3 space-y-3" data-testid="add-country-form">
           <div className="grid grid-cols-2 gap-3">

@@ -1,49 +1,57 @@
-# Swift Formations — PRD
+# Swift Formations — Multi-Tenant CMS PRD
 
 ## Original Problem Statement
-High-converting single-page landing for a UK company formation service.
-Target: first-time entrepreneurs, non-UK residents, freelancers, small business owners.
-Selling points: 24-hour formation, low price (£12.99+), full compliance, privacy, ongoing support.
+Single admin panel managing landing pages for many countries. Each country has its own domain
+(ukcompanyformation.com, ukraineformations.com, …). One shared template — design changes
+propagate to all sites; content is per-country. Logo abbreviation auto-generated from brand
+name. Company-formation data from b2bhub.ltd. Deploy via GitHub → Railway.
 
 ## User Choices
-- Company name: **Swift Formations**
-- Backend: **None** (frontend-only static form)
-- Name Checker: **Mock** (client-side)
-- Design: **Modern minimal, design agent decided** → Swiss/High-Contrast Linear-style
-- Pricing tiers: Essential £12.99 · Privacy £39.99 (popular) · All-Inclusive £89.99
+- Stack: React SPA + FastAPI + MongoDB (Next.js port deferred)
+- Admin: `admin@swiftformations.io` / `Admin@12345`
+- B2BHub: **MOCKED** (real key + endpoint to be plugged in later)
+- Seeded countries: UK, Ukraine, Germany, France, USA
+- Deployment target: GitHub → Railway, multi-domain on one service
 
-## Architecture
-- Frontend: React 19 + Tailwind + shadcn/ui + framer-motion + lucide-react
-- Fonts: Outfit (display) · Manrope (body) · JetBrains Mono (mono)
-- Backend: untouched (template /api remains for future)
-- Single route: `/` renders `pages/Landing.js`
+## Architecture (current)
+- `/api/auth/*` JWT (Bearer header + cookie); brute-force lockout (email + ip), proxy-aware via X-Forwarded-For
+- `/api/admin/countries` full CRUD, `/content`, `/publish`, `/unpublish`, `/reset-content`
+- `/api/public/landing?host=…&tenant=…` resolves tenant from domain or slug
+- `/api/admin/b2bhub/:code` proxies MOCKED data (`/app/backend/b2bhub.py`)
+- 5 countries + admin seeded idempotently on startup
+- Frontend resolves tenant from `window.location.hostname` (with `?tenant=` and `/preview/:slug` fallbacks)
+- Auto-logo: `autoAbbreviation(brandName)` shared client+server
 
-## Sections Implemented (2025-12)
-- [x] Sticky glass header with anchor nav + mobile menu
-- [x] Hero with grid background, headline, mock company-name checker (with suffix select), dual CTA, trust signals, live formation panel
-- [x] Marquee trust bar with partner logos (Companies House, Tide, Wise, FreeAgent, ACSP, Stripe, B Corp)
-- [x] How It Works (4 step bento grid: Name Check → Details → Payment → Documents)
-- [x] Pricing 3 tiers — Privacy is inverse black w/ red "Most popular" badge
-- [x] Benefits bento (asymmetric 12-col grid + dark CTA strip)
-- [x] Testimonials (3 cards w/ provided portraits)
-- [x] FAQ shadcn accordion (8 questions)
-- [x] Final CTA with 24h countdown + offer chips
-- [x] Dark footer with mega brand mark + 4 link columns
-- [x] Lead capture modal (frontend-only, validates and shows success state)
+## What's Implemented (2025-12)
+- [x] Auth (login, /me, JWT, lockout)
+- [x] Multi-tenant landing template (Hero / TrustBar / How / Pricing / Benefits / Testimonials / FAQ / Final CTA / Footer / Lead form) — all content-driven
+- [x] Per-country branding (brand color, accent color, currency, authority, logo abbreviation)
+- [x] Admin panel: sidebar country list, dashboard with stats, country edit page
+- [x] Country edit tabs: General · Content · SEO · B2BHub · Danger
+- [x] Section editors for Hero, Trust, How, Pricing tiers (w/ features), Benefits, Testimonials, FAQs, Final CTA, Footer columns
+- [x] Add / delete / publish / unpublish / reset-content
+- [x] B2BHub MOCKED panel with refresh + visible MOCKED tag
+- [x] 5 countries pre-seeded
+- [x] SEO: per-country `<title>` and `<meta description>` rewritten at runtime
 
 ## Test Status
-- Iteration 1: 23/24 PASS. Fixed medium bug (`noValidate` on lead form so custom email-validation message displays).
+- Iteration 2: backend 25/26 pytest pass, frontend 100% of critical flows.
+- Fixed: proxy-aware brute-force lockout (verified 6th attempt now returns 429).
+- Fixed: Radix Dialog a11y description added.
 
 ## Backlog
-- P1: Real Companies House API integration for name checker (currently mocked)
-- P1: Wire lead form to backend + admin view (Mongo)
-- P2: Add live chat widget (Intercom/Crisp placeholder shown)
-- P2: SEO structured data (FAQ, Organization, Service schema in `<head>`)
-- P2: A/B test variant for hero headline
-- P3: Blog/Resources section
-- P3: Add cookie consent banner
+- P1: Real B2BHub.ltd API integration (replace MOCK in `b2bhub.py`)
+- P1: Migrate to Next.js for SSR per-domain SEO (one-day port)
+- P1: Lead form persistence + admin "Leads" tab
+- P2: Field-level "synced from B2BHub" override indicator with one-click sync
+- P2: Revision history + rollback per country
+- P2: Per-country language (multi-language inside a country)
+- P2: JSON-LD schema injection (FAQPage, Organization, Service)
+- P3: Bulk CSV import "Create 20 countries"
+- P3: Audit log of admin edits
 
 ## Next Tasks
-1. Decide on real Companies House API integration vs. keep mock
-2. Add lead persistence + simple admin route (if user wants)
-3. SEO: inject JSON-LD schema in `index.html`
+1. Push to GitHub (instructions: see support_agent output earlier)
+2. Deploy on Railway with web + api + mongo services
+3. Attach `ukcompanyformation.com` (and others) as custom domains
+4. Provide real B2BHub credentials → drop into `b2bhub.py` `fetch_b2bhub_data`
