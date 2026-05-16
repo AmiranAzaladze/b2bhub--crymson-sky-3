@@ -1,0 +1,44 @@
+{
+  "summary": "Full backend + frontend testing of multi-tenant CMS. 25/26 pytest pass (96%). All public landings (uk/ua/de/fr/us) render with correct currency/authority/company-type. Lead dialog, admin login, dashboard (5 countries), country edit (all 5 tabs), B2BHub MOCKED panel, and 401-redirect all work end-to-end.",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {
+        "endpoint": "POST /api/auth/login",
+        "issue": "Brute-force lockout (5 failures -> 429) did NOT trigger when tested through the public preview URL. After 6 wrong-password attempts with the same email, the API kept returning 401 instead of 429. RCA: the rate-limit identifier is `request.client.host:email`, and behind the Kubernetes ingress `request.client.host` resolves to the per-request proxy/pod IP — which can vary between requests, so each attempt is counted against a different key and the threshold of 5 is never reached for the same client/user. The brute-force guard is effectively bypassed for real internet traffic. Fix suggestion: use `X-Forwarded-For` (left-most IP) or `X-Real-IP` when present, or key the counter only on email (with a small per-IP secondary counter)."
+      }
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Lead dialog & Add-country dialog", "issues": ["Radix Dialog console warning: Missing `Description` or `aria-describedby` on DialogContent. Cosmetic / a11y only — add a <DialogDescription> or aria-describedby."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_swift_formations.py",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "action_items": [
+    "Fix brute-force lockout to work behind a reverse proxy: respect X-Forwarded-For / X-Real-IP, or key the lockout primarily on the email (and not on client IP) so the 5-attempt threshold is actually reachable from real internet traffic.",
+    "Add <DialogDescription> (or aria-describedby) to LeadDialog and AddCountryDialog to clear the Radix a11y warning."
+  ],
+  "critical_code_review_comments": [
+    "server.py: `request.client.host` is used directly for the brute-force key. Behind an ingress/proxy this is the proxy IP, not the real client, so the rate-limit doesn't accumulate per real user. Use X-Forwarded-For or X-Real-IP header (with a trusted-proxy allow-list).",
+    "server.py uses deprecated FastAPI `@app.on_event('startup' / 'shutdown')`. Migrate to `lifespan` context manager (Starlette deprecated `on_event` in 0.91+).",
+    "PATCH /api/admin/countries/{id} accepts a raw Dict[str, Any] body — no validation. A typed Pydantic model (subset of CountryIn with all-optional fields) would prevent accidental garbage writes.",
+    "AdminCountryEdit / Field components: did not see `data-testid` on the brand-name input (selector lookup `input[name='brand_name']` returned no match). Add data-testid to all Field inputs to help test automation.",
+    "seed_countries() writes the same default content blob into landing_content even when slug already exists in countries but content is missing — currently it only seeds when country itself is missing. Edge case: if landing_content is wiped but country survives, public landing falls back to a transient default; safer to upsert content separately."
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_swift_formations.py (new)"
+  ],
+  "success_rate": {"backend": "96% (25/26)", "frontend": "100% of critical flows verified"},
+  "test_credentials": "admin@swiftformations.io / Admin@12345 (super_admin). Token stored in localStorage key `sf_token`.",
+  "seed_data_creation": "Tests create a transient country (random slug `test{uuid6}`) and delete it. No persistent test data left.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Backend pytest file is at /app/backend/tests/test_swift_formations.py — covers auth, CRUD, content, publish/unpublish, reset, public landing (5 tenants + 3 hosts), B2BHub mock, and brute-force. Only the brute-force test fails, and that is a real bug behind k8s ingress (see RCA). Frontend admin token key is `sf_token`. Tabs in the country edit page are real Radix tabs reachable via get_by_role('tab', name='...'). The country-edit URL pattern is /admin/countries/{uuid}.",
+  "rca_of_the_issue": "Brute-force lockout: server.py:263 uses `request.client.host` as part of the identifier. In production-style deploys behind a reverse proxy (Kubernetes ingress here), this returns the proxy's IP and may vary per request depending on which proxy/pod terminates the connection, so the per-(ip,email) counter never reaches 5. Verified: 6 consecutive wrong-password POSTs to /api/auth/login against the public URL each returned 401, none returned 429. Mitigation: read X-Forwarded-For / X-Real-IP (configure a trusted-proxy list) or use email-only as the lockout key with a per-IP secondary safeguard."
+}

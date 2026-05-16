@@ -14,13 +14,8 @@ import { Button } from "../ui/button";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
-export default function LeadDialog({ open, onOpenChange }) {
-  const [form, setForm] = React.useState({
-    name: "",
-    email: "",
-    phone: "",
-    idea: "",
-  });
+export default function LeadDialog({ open, onOpenChange, country }) {
+  const [form, setForm] = React.useState({ name: "", email: "", phone: "", idea: "" });
   const [errors, setErrors] = React.useState({});
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
@@ -57,7 +52,7 @@ export default function LeadDialog({ open, onOpenChange }) {
       setLoading(false);
       setSuccess(true);
       toast.success("We'll be in touch within 1 working hour.");
-    }, 1100);
+    }, 1000);
   };
 
   const onChange = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -72,64 +67,41 @@ export default function LeadDialog({ open, onOpenChange }) {
           <>
             <DialogHeader className="px-7 pt-7 pb-2 text-left">
               <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500 mb-2">
-                Start your company
+                Start your {country?.name || ""} company
               </div>
               <DialogTitle className="font-display text-[26px] font-bold tracking-tight text-neutral-950">
                 Let's get you registered.
               </DialogTitle>
               <DialogDescription className="text-[14px] text-neutral-600 mt-1.5">
-                Tell us a little about you. A UK advisor will reach out within 1 working hour to
-                help you choose the right plan.
+                Tell us a little about you. An advisor will reach out within 1 working hour to help
+                you choose the right plan.
               </DialogDescription>
             </DialogHeader>
 
             <form onSubmit={onSubmit} noValidate className="px-7 pb-7 pt-4 space-y-4" data-testid="lead-form">
               <Field label="Full name" id="name" error={errors.name}>
-                <Input
-                  id="name"
-                  value={form.name}
-                  onChange={onChange("name")}
-                  placeholder="Jane Doe"
-                  className="h-11"
-                  data-testid="lead-name"
-                />
+                <Input id="name" value={form.name} onChange={onChange("name")}
+                  placeholder="Jane Doe" className="h-11" data-testid="lead-name" />
               </Field>
               <Field label="Email" id="email" error={errors.email}>
-                <Input
-                  id="email"
-                  type="email"
-                  value={form.email}
-                  onChange={onChange("email")}
-                  placeholder="jane@company.com"
-                  className="h-11"
-                  data-testid="lead-email"
-                />
+                <Input id="email" type="email" value={form.email} onChange={onChange("email")}
+                  placeholder="jane@company.com" className="h-11" data-testid="lead-email" />
               </Field>
               <Field label="Phone" id="phone" error={errors.phone}>
-                <Input
-                  id="phone"
-                  value={form.phone}
-                  onChange={onChange("phone")}
-                  placeholder="+44 7700 900123"
-                  className="h-11"
-                  data-testid="lead-phone"
-                />
+                <Input id="phone" value={form.phone} onChange={onChange("phone")}
+                  placeholder="+44 7700 900123" className="h-11" data-testid="lead-phone" />
               </Field>
               <Field label="Tell us about your company (optional)" id="idea">
-                <Textarea
-                  id="idea"
-                  value={form.idea}
-                  onChange={onChange("idea")}
+                <Textarea id="idea" value={form.idea} onChange={onChange("idea")}
                   placeholder="e.g. AI consultancy, e-commerce brand, freelance studio…"
-                  className="min-h-[80px] resize-none"
-                  data-testid="lead-idea"
-                />
+                  className="min-h-[80px] resize-none" data-testid="lead-idea" />
               </Field>
 
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-12 bg-[#0A0A0A] hover:bg-neutral-800 text-white rounded-full text-[14px] font-medium"
+                className="w-full h-12 text-white rounded-full text-[14px] font-medium hover:opacity-90"
+                style={{ backgroundColor: country?.brand_color || "#0A0A0A" }}
                 data-testid="lead-submit"
               >
                 {loading ? (
@@ -163,12 +135,13 @@ export default function LeadDialog({ open, onOpenChange }) {
               You're on the list.
             </h3>
             <p className="text-[14px] text-neutral-600 mt-2 max-w-sm mx-auto">
-              A UK formation advisor will reach out within 1 working hour. In the meantime, take
-              a look at our pricing plans below.
+              An advisor will reach out within 1 working hour. In the meantime, take a look at our
+              pricing plans below.
             </p>
             <Button
               onClick={() => onOpenChange(false)}
-              className="mt-7 h-11 px-5 bg-[#0A0A0A] hover:bg-neutral-800 text-white rounded-full"
+              className="mt-7 h-11 px-5 text-white rounded-full hover:opacity-90"
+              style={{ backgroundColor: country?.brand_color || "#0A0A0A" }}
               data-testid="lead-close"
             >
               Got it
@@ -183,9 +156,7 @@ export default function LeadDialog({ open, onOpenChange }) {
 const Field = ({ label, id, error, children }) => (
   <div>
     <div className="flex items-center justify-between mb-1.5">
-      <Label htmlFor={id} className="text-[12.5px] font-medium text-neutral-700">
-        {label}
-      </Label>
+      <Label htmlFor={id} className="text-[12.5px] font-medium text-neutral-700">{label}</Label>
       {error && (
         <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-red-600">
           {error}

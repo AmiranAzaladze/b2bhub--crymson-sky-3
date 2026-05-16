@@ -2,6 +2,7 @@ import React from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Button } from "../ui/button";
 import { ArrowRight, Menu, X } from "lucide-react";
+import Logo from "../../lib/Logo";
 
 const navItems = [
   { label: "How it works", href: "#how-it-works" },
@@ -11,11 +12,10 @@ const navItems = [
   { label: "FAQ", href: "#faq" },
 ];
 
-export default function Header({ onCTAClick }) {
+export default function Header({ country, onCTAClick }) {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const { scrollY } = useScroll();
-
   useMotionValueEvent(scrollY, "change", (v) => setScrolled(v > 12));
 
   return (
@@ -32,12 +32,13 @@ export default function Header({ onCTAClick }) {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <a href="#top" className="flex items-center gap-2" data-testid="logo-link">
-          <div className="h-7 w-7 rounded-md bg-[#0A0A0A] grid place-items-center">
-            <span className="text-white font-display font-bold text-[13px] leading-none">SF</span>
-          </div>
-          <span className="font-display font-bold text-[17px] tracking-tight text-neutral-950">
-            Swift Formations
-          </span>
+          <Logo
+            brandName={country.brand_name}
+            abbreviation={country.abbreviation}
+            bg={country.brand_color}
+            fg="#FFFFFF"
+            size="sm"
+          />
         </a>
 
         <nav className="hidden md:flex items-center gap-8">
@@ -54,16 +55,10 @@ export default function Header({ onCTAClick }) {
         </nav>
 
         <div className="hidden md:flex items-center gap-3">
-          <a
-            href="#login"
-            className="text-[13px] font-medium text-neutral-700 hover:text-neutral-950 transition-colors"
-            data-testid="login-link"
-          >
-            Sign in
-          </a>
           <Button
             onClick={onCTAClick}
-            className="h-9 px-4 bg-[#0A0A0A] hover:bg-neutral-800 text-white rounded-full text-[13px] font-medium"
+            className="h-9 px-4 text-white rounded-full text-[13px] font-medium hover:opacity-90"
+            style={{ backgroundColor: country.brand_color }}
             data-testid="header-cta-button"
           >
             Start now
@@ -99,7 +94,8 @@ export default function Header({ onCTAClick }) {
                 setOpen(false);
                 onCTAClick();
               }}
-              className="w-full mt-2 bg-[#0A0A0A] hover:bg-neutral-800 text-white rounded-full"
+              className="w-full mt-2 text-white rounded-full"
+              style={{ backgroundColor: country.brand_color }}
               data-testid="mobile-cta-button"
             >
               Start now

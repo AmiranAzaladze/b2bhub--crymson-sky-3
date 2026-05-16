@@ -2,31 +2,8 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 
-const testimonials = [
-  {
-    quote:
-      "Filed and incorporated in under an hour. The privacy package alone is worth it — my home address is finally off the public record.",
-    name: "Sarah Jenkins",
-    role: "Tech Founder · Bristol",
-    img: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTN8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMGhlYWRzaG90JTIwcG9ydHJhaXR8ZW58MHx8fHwxNzc4NzQ0NzA2fDA&ixlib=rb-4.1.0&q=85",
-  },
-  {
-    quote:
-      "I'm based in Lisbon and was worried about forming a UK company remotely. The team made it effortless and answered every question in plain English.",
-    name: "David Chen",
-    role: "Consultant · Lisbon, PT",
-    img: "https://images.unsplash.com/photo-1600878459138-e1123b37cb30?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTN8MHwxfHNlYXJjaHw0fHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMGhlYWRzaG90JTIwcG9ydHJhaXR8ZW58MHx8fHwxNzc4NzQ0NzA2fDA&ixlib=rb-4.1.0&q=85",
-  },
-  {
-    quote:
-      "Confirmation Statement reminders, dashboard, Tide intro — it pays for itself many times over. Genuinely the easiest part of starting my brand.",
-    name: "Emma Thompson",
-    role: "E-commerce Owner · Manchester",
-    img: "https://images.unsplash.com/photo-1685760259914-ee8d2c92d2e0?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1OTN8MHwxfHNlYXJjaHwyfHxwcm9mZXNzaW9uYWwlMjBidXNpbmVzcyUyMGhlYWRzaG90JTIwcG9ydHJhaXR8ZW58MHx8fHwxNzc4NzQ0NzA2fDA&ixlib=rb-4.1.0&q=85",
-  },
-];
-
-export default function Testimonials() {
+export default function Testimonials({ data }) {
+  if (!data) return null;
   return (
     <section
       id="testimonials"
@@ -37,14 +14,13 @@ export default function Testimonials() {
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-14 gap-6">
           <div>
             <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-500 mb-3">
-              Customer stories
+              {data.eyebrow}
             </div>
             <h2 className="font-display text-4xl md:text-5xl font-bold tracking-[-0.03em] text-neutral-950">
-              Loved by 15,000+ <br />
-              <span className="text-neutral-400">UK founders.</span>
+              {data.title} <br />
+              <span className="text-neutral-400">{data.title_secondary}</span>
             </h2>
           </div>
-
           <div className="flex items-center gap-4">
             <div className="flex">
               {[...Array(5)].map((_, i) => (
@@ -53,17 +29,17 @@ export default function Testimonials() {
             </div>
             <div>
               <div className="font-display text-[20px] font-bold tracking-tight text-neutral-950 leading-none">
-                4.9 / 5
+                {data.rating}
               </div>
               <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-500 mt-1">
-                20,142 Trustpilot reviews
+                {data.rating_sub}
               </div>
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-6">
-          {testimonials.map((t, i) => (
+          {(data.items || []).map((t, i) => (
             <motion.figure
               key={t.name}
               initial={{ opacity: 0, y: 16 }}

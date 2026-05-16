@@ -3,8 +3,7 @@ import { motion } from "framer-motion";
 import { Button } from "../ui/button";
 import { ArrowRight, Timer } from "lucide-react";
 
-export default function FinalCTA({ onCTAClick }) {
-  // 24h fake countdown
+export default function FinalCTA({ data, onCTAClick }) {
   const [t, setT] = React.useState({ h: 23, m: 47, s: 12 });
 
   React.useEffect(() => {
@@ -12,19 +11,9 @@ export default function FinalCTA({ onCTAClick }) {
       setT((p) => {
         let { h, m, s } = p;
         s -= 1;
-        if (s < 0) {
-          s = 59;
-          m -= 1;
-        }
-        if (m < 0) {
-          m = 59;
-          h -= 1;
-        }
-        if (h < 0) {
-          h = 23;
-          m = 59;
-          s = 59;
-        }
+        if (s < 0) { s = 59; m -= 1; }
+        if (m < 0) { m = 59; h -= 1; }
+        if (h < 0) { h = 23; m = 59; s = 59; }
         return { h, m, s };
       });
     }, 1000);
@@ -32,6 +21,7 @@ export default function FinalCTA({ onCTAClick }) {
   }, []);
 
   const pad = (n) => String(n).padStart(2, "0");
+  if (!data) return null;
 
   return (
     <section className="py-24 md:py-32" data-testid="final-cta-section">
@@ -50,16 +40,13 @@ export default function FinalCTA({ onCTAClick }) {
             <div className="md:col-span-7">
               <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] backdrop-blur px-3 py-1 text-[11.5px] font-mono uppercase tracking-[0.18em] text-white/70">
                 <Timer className="h-3 w-3" />
-                Launch offer · ends soon
+                {data.eyebrow}
               </div>
               <h2 className="font-display mt-5 text-4xl md:text-5xl lg:text-6xl font-bold tracking-[-0.04em] leading-[1.02]">
-                Be a UK Limited Company <br />
-                <span className="text-white/50">by this time tomorrow.</span>
+                {data.headline} <br />
+                <span className="text-white/50">{data.headline_secondary}</span>
               </h2>
-              <p className="mt-5 text-[16px] text-white/70 max-w-xl leading-relaxed">
-                From £12.99. No hidden fees. 14-day refund. UK-based support. The fastest, most
-                trusted way to start your company.
-              </p>
+              <p className="mt-5 text-[16px] text-white/70 max-w-xl leading-relaxed">{data.sub}</p>
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Button
@@ -67,7 +54,7 @@ export default function FinalCTA({ onCTAClick }) {
                   className="h-12 px-6 bg-white hover:bg-neutral-200 text-neutral-950 rounded-full text-[14px] font-medium"
                   data-testid="final-cta-button"
                 >
-                  Start your company now
+                  {data.cta_primary}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
                 <a
@@ -75,12 +62,11 @@ export default function FinalCTA({ onCTAClick }) {
                   className="h-12 px-5 inline-flex items-center text-[14px] font-medium text-white/80 hover:text-white"
                   data-testid="final-cta-secondary"
                 >
-                  Compare plans →
+                  {data.cta_secondary} →
                 </a>
               </div>
             </div>
 
-            {/* Countdown */}
             <div className="md:col-span-5">
               <div className="rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur p-6">
                 <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/60 mb-4">
@@ -92,10 +78,7 @@ export default function FinalCTA({ onCTAClick }) {
                     { v: pad(t.m), l: "Minutes" },
                     { v: pad(t.s), l: "Seconds" },
                   ].map((b) => (
-                    <div
-                      key={b.l}
-                      className="rounded-xl border border-white/10 bg-black/40 p-3 text-center"
-                    >
+                    <div key={b.l} className="rounded-xl border border-white/10 bg-black/40 p-3 text-center">
                       <div className="font-display text-[34px] md:text-[40px] font-bold tracking-tighter leading-none tabular-nums">
                         {b.v}
                       </div>
@@ -106,9 +89,9 @@ export default function FinalCTA({ onCTAClick }) {
                   ))}
                 </div>
                 <div className="mt-5 grid grid-cols-3 gap-3 text-center">
-                  <Mini v="£12.99" l="from" />
-                  <Mini v="24h" l="filing" />
-                  <Mini v="14d" l="refund" />
+                  {(data.chips || []).map((c) => (
+                    <Mini key={c.l} v={c.v} l={c.l} />
+                  ))}
                 </div>
               </div>
             </div>

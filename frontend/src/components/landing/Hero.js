@@ -15,27 +15,28 @@ import {
   Star,
   Loader2,
   Shield,
+  Users,
   XCircle,
   Sparkles,
 } from "lucide-react";
 
+const ICONS = { Star, Shield, Users };
 const RESERVED = ["limited", "ltd", "plc", "uk", "test", "demo", "example"];
 
 function checkNameAvailability(name) {
   const cleaned = name.trim().toLowerCase().replace(/\s+/g, "");
   if (cleaned.length < 3) return { ok: false, reason: "Name must be at least 3 characters." };
   if (RESERVED.includes(cleaned)) return { ok: false, reason: "This name is too generic / reserved." };
-  // deterministic-ish mock: if length is even -> available
   const taken = cleaned.length % 7 === 0;
   return taken
-    ? { ok: false, reason: "Sorry, this name is already taken at Companies House." }
+    ? { ok: false, reason: "Sorry, this name is already taken." }
     : { ok: true };
 }
 
-export default function Hero({ onCTAClick }) {
+export default function Hero({ country, hero, b2bhub, onCTAClick }) {
   const [name, setName] = React.useState("");
-  const [suffix, setSuffix] = React.useState("LTD");
-  const [status, setStatus] = React.useState("idle"); // idle | loading | available | unavailable
+  const [suffix, setSuffix] = React.useState((b2bhub?.company_types?.[0] || "LTD"));
+  const [status, setStatus] = React.useState("idle");
   const [reason, setReason] = React.useState("");
 
   const handleCheck = (e) => {
@@ -45,28 +46,30 @@ export default function Hero({ onCTAClick }) {
     setReason("");
     setTimeout(() => {
       const r = checkNameAvailability(name);
-      if (r.ok) {
-        setStatus("available");
-      } else {
+      if (r.ok) setStatus("available");
+      else {
         setStatus("unavailable");
         setReason(r.reason);
       }
-    }, 1200);
+    }, 1100);
   };
+
+  const suffixOptions =
+    b2bhub?.company_types && b2bhub.company_types.length
+      ? b2bhub.company_types
+      : ["LTD", "LIMITED", "PLC"];
 
   return (
     <section id="top" className="relative overflow-hidden pt-12 md:pt-20 pb-20 md:pb-28">
-      {/* Grid background */}
       <div className="absolute inset-0 bg-grid mask-radial pointer-events-none" aria-hidden="true" />
-      {/* subtle red accent */}
       <div
-        className="absolute -top-32 -right-32 h-[420px] w-[420px] rounded-full blur-3xl opacity-[0.07] bg-[#C8102E] pointer-events-none"
+        className="absolute -top-32 -right-32 h-[420px] w-[420px] rounded-full blur-3xl opacity-[0.08] pointer-events-none"
+        style={{ backgroundColor: country.accent_color }}
         aria-hidden="true"
       />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-start">
-          {/* Left: copy + checker */}
           <div className="lg:col-span-7">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
@@ -79,26 +82,28 @@ export default function Hero({ onCTAClick }) {
                 <span className="absolute inline-flex h-full w-full rounded-full bg-green-500 live-dot" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-600" />
               </span>
-              ACSP Authorised · Companies House Filing Partner
+              {hero.badge}
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.05 }}
-              className="font-display mt-6 text-[44px] leading-[1.02] sm:text-[56px] md:text-[64px] lg:text-[72px] font-bold tracking-[-0.04em] text-neutral-950"
+              className="font-display mt-6 text-[40px] leading-[1.02] sm:text-[52px] md:text-[60px] lg:text-[68px] font-bold tracking-[-0.04em] text-neutral-950"
               data-testid="hero-headline"
             >
-              Form your UK Limited Company in{" "}
+              {hero.headline_prefix}{" "}
               <span className="relative inline-block whitespace-nowrap">
-                <span className="relative z-10">24 hours</span>
-                <span className="absolute inset-x-0 bottom-1.5 h-3 bg-[#C8102E]/15 -z-0" aria-hidden="true" />
+                <span className="relative z-10">{hero.headline_highlight}</span>
+                <span
+                  className="absolute inset-x-0 bottom-1.5 h-3 -z-0"
+                  style={{ backgroundColor: `${country.accent_color}26` }}
+                  aria-hidden="true"
+                />
               </span>
               .
               <br className="hidden sm:block" />
-              <span className="text-neutral-400">From</span>{" "}
-              <span className="font-mono align-middle">£12.99</span>
-              <span className="text-neutral-400 font-display">.</span>
+              <span className="text-neutral-400">{hero.headline_suffix}</span>
             </motion.h1>
 
             <motion.p
@@ -108,12 +113,10 @@ export default function Hero({ onCTAClick }) {
               className="mt-6 max-w-xl text-[16px] md:text-[17px] leading-relaxed text-neutral-600"
               data-testid="hero-subheadline"
             >
-              Fast, compliant, and fully protected. 100% online. Expert UK support
-              included. Over <span className="text-neutral-950 font-semibold">15,000+ companies</span> formed.{" "}
-              <span className="font-mono text-[13px] text-neutral-500"> + £50 Companies House fee.</span>
+              {hero.sub}{" "}
+              <span className="font-mono text-[13px] text-neutral-500">{hero.fee_note}</span>
             </motion.p>
 
-            {/* Name checker */}
             <motion.form
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -141,21 +144,22 @@ export default function Hero({ onCTAClick }) {
                 />
                 <Select value={suffix} onValueChange={setSuffix}>
                   <SelectTrigger
-                    className="sm:w-[120px] h-11 border-0 bg-neutral-50 rounded-lg font-mono text-[13px]"
+                    className="sm:w-[130px] h-11 border-0 bg-neutral-50 rounded-lg font-mono text-[13px]"
                     data-testid="name-checker-suffix"
                   >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="LTD">LTD</SelectItem>
-                    <SelectItem value="LIMITED">LIMITED</SelectItem>
-                    <SelectItem value="PLC">PLC</SelectItem>
+                    {suffixOptions.map((o) => (
+                      <SelectItem key={o} value={o}>{o}</SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
                 <Button
                   type="submit"
                   disabled={status === "loading" || !name.trim()}
-                  className="h-11 px-5 bg-[#0A0A0A] hover:bg-neutral-800 text-white rounded-lg font-medium text-[14px]"
+                  className="h-11 px-5 text-white rounded-lg font-medium text-[14px] hover:opacity-90"
+                  style={{ backgroundColor: country.brand_color }}
                   data-testid="name-checker-submit"
                 >
                   {status === "loading" ? (
@@ -172,7 +176,6 @@ export default function Hero({ onCTAClick }) {
                 </Button>
               </div>
 
-              {/* Result */}
               {status === "available" && (
                 <motion.div
                   initial={{ opacity: 0, y: 6 }}
@@ -185,7 +188,7 @@ export default function Hero({ onCTAClick }) {
                     <span className="font-semibold text-green-900">
                       "{name.trim()} {suffix}"
                     </span>{" "}
-                    <span className="text-green-800">is available at Companies House.</span>{" "}
+                    <span className="text-green-800">is available.</span>{" "}
                     <button
                       type="button"
                       onClick={onCTAClick}
@@ -209,7 +212,6 @@ export default function Hero({ onCTAClick }) {
               )}
             </motion.form>
 
-            {/* CTAs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -218,10 +220,11 @@ export default function Hero({ onCTAClick }) {
             >
               <Button
                 onClick={onCTAClick}
-                className="h-12 px-6 bg-[#0A0A0A] hover:bg-neutral-800 text-white rounded-full text-[14px] font-medium"
+                className="h-12 px-6 text-white rounded-full text-[14px] font-medium hover:opacity-90"
+                style={{ backgroundColor: country.brand_color }}
                 data-testid="hero-primary-cta"
               >
-                Start your company now
+                {hero.cta_primary}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <a
@@ -229,11 +232,10 @@ export default function Hero({ onCTAClick }) {
                 className="h-12 px-5 inline-flex items-center text-[14px] font-medium text-neutral-700 hover:text-neutral-950 transition-colors"
                 data-testid="hero-secondary-cta"
               >
-                See pricing →
+                {hero.cta_secondary} →
               </a>
             </motion.div>
 
-            {/* Trust signals */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -241,29 +243,29 @@ export default function Hero({ onCTAClick }) {
               className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3"
               data-testid="hero-trust-signals"
             >
-              <div className="flex items-center gap-2">
-                <div className="flex">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-[#00B67A] text-[#00B67A]" />
-                  ))}
-                </div>
-                <span className="text-[12px] text-neutral-700">
-                  <span className="font-semibold text-neutral-950">4.9/5</span> · Trustpilot (20,000+)
-                </span>
-              </div>
-              <div className="h-3 w-px bg-neutral-300" />
-              <div className="flex items-center gap-1.5 text-[12px] text-neutral-700">
-                <Shield className="h-3.5 w-3.5" />
-                <span>ACSP authorised</span>
-              </div>
-              <div className="h-3 w-px bg-neutral-300" />
-              <span className="text-[12px] text-neutral-700">
-                <span className="font-semibold text-neutral-950">1,247</span> companies formed this month
-              </span>
+              {(hero.trust_chips || []).map((chip, i) => {
+                const Icon = ICONS[chip.icon] || Shield;
+                return (
+                  <React.Fragment key={i}>
+                    {i > 0 && <div className="h-3 w-px bg-neutral-300" />}
+                    <div className="flex items-center gap-1.5 text-[12px] text-neutral-700">
+                      {chip.icon === "Star" ? (
+                        <div className="flex">
+                          {[...Array(5)].map((_, j) => (
+                            <Star key={j} className="h-3.5 w-3.5 fill-[#00B67A] text-[#00B67A]" />
+                          ))}
+                        </div>
+                      ) : (
+                        <Icon className="h-3.5 w-3.5" />
+                      )}
+                      <span>{chip.text}</span>
+                    </div>
+                  </React.Fragment>
+                );
+              })}
             </motion.div>
           </div>
 
-          {/* Right: Technical panel */}
           <motion.div
             initial={{ opacity: 0, scale: 0.97, y: 24 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -271,7 +273,6 @@ export default function Hero({ onCTAClick }) {
             className="lg:col-span-5 relative"
           >
             <div className="relative rounded-2xl border border-neutral-200 bg-white overflow-hidden shadow-[0_24px_60px_-30px_rgba(0,0,0,0.18)]">
-              {/* Panel header */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-neutral-200 bg-neutral-50/60">
                 <div className="flex items-center gap-1.5">
                   <span className="h-2 w-2 rounded-full bg-neutral-300" />
@@ -287,25 +288,18 @@ export default function Hero({ onCTAClick }) {
                 </span>
               </div>
 
-              {/* Panel body */}
               <div className="p-5 space-y-4">
                 <div>
                   <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-500 mb-1.5">
                     Status
                   </div>
                   <div className="text-[15px] font-semibold text-neutral-950">
-                    Filing submitted to Companies House
+                    Filing submitted to {country.authority_name}
                   </div>
                 </div>
 
                 <div className="space-y-2.5">
-                  {[
-                    { label: "Name reservation", t: "00:01:24", done: true },
-                    { label: "Director details", t: "00:03:12", done: true },
-                    { label: "Share allotment", t: "00:04:30", done: true },
-                    { label: "Companies House filing", t: "00:11:08", done: true },
-                    { label: "Certificate of Incorporation", t: "ETA 6h", done: false },
-                  ].map((s, i) => (
+                  {(hero.panel_steps || []).map((s) => (
                     <div
                       key={s.label}
                       className="flex items-center justify-between text-[13px] py-2 border-b border-neutral-100 last:border-0"
@@ -328,17 +322,19 @@ export default function Hero({ onCTAClick }) {
                 </div>
 
                 <div className="mt-4 grid grid-cols-3 gap-3 pt-3 border-t border-neutral-100">
-                  <Stat label="Filings / mo" value="3,200" />
-                  <Stat label="Avg. time" value="18 min" />
-                  <Stat label="Success" value="99.8%" />
+                  {(hero.stats || []).map((st) => (
+                    <Stat key={st.label} label={st.label} value={st.value} />
+                  ))}
                 </div>
               </div>
             </div>
 
-            {/* Floating chip */}
             <div className="hidden md:flex absolute -left-6 -bottom-6 items-center gap-2 rounded-xl border border-neutral-200 bg-white px-3 py-2 shadow-[0_18px_40px_-22px_rgba(0,0,0,0.25)]">
-              <div className="h-8 w-8 rounded-lg bg-[#C8102E]/10 grid place-items-center">
-                <Shield className="h-4 w-4 text-[#C8102E]" />
+              <div
+                className="h-8 w-8 rounded-lg grid place-items-center"
+                style={{ backgroundColor: `${country.accent_color}1a` }}
+              >
+                <Shield className="h-4 w-4" style={{ color: country.accent_color }} />
               </div>
               <div>
                 <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-neutral-500">
