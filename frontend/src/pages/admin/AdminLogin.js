@@ -6,8 +6,10 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { ArrowRight, Loader2, ShieldCheck } from "lucide-react";
 import { formatApiError } from "../../api/client";
+import useDarkRoot from "../../lib/useDarkRoot";
 
 export default function AdminLogin() {
+  useDarkRoot();
   const { user, ready, login } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = React.useState("admin@swiftformations.io");
@@ -32,46 +34,47 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] grid lg:grid-cols-2">
-      <div className="hidden lg:flex flex-col justify-between p-12 bg-[#0A0A0A] text-white relative overflow-hidden">
+    <div className="min-h-screen bg-zinc-950 text-zinc-100 grid lg:grid-cols-2">
+      <div className="hidden lg:flex flex-col justify-between p-12 bg-zinc-900 border-r border-zinc-800 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-dark opacity-50 mask-radial pointer-events-none" />
+        <div className="absolute -top-32 -left-32 h-[420px] w-[420px] rounded-full blur-3xl opacity-20 bg-[#C8102E] pointer-events-none" />
         <div className="relative">
           <div className="flex items-center gap-2 mb-12">
             <div className="h-8 w-8 rounded-md bg-white grid place-items-center">
-              <span className="text-[#0A0A0A] font-display font-bold text-[14px]">SF</span>
+              <span className="text-zinc-950 font-display font-bold text-[14px]">SF</span>
             </div>
-            <span className="font-display font-bold text-[18px]">Swift Formations · Admin</span>
+            <span className="font-display font-bold text-[18px] text-zinc-50">Swift Formations · Admin</span>
           </div>
-          <h1 className="font-display text-5xl font-bold tracking-[-0.03em] leading-[1.04] max-w-md">
+          <h1 className="font-display text-5xl font-bold tracking-[-0.03em] leading-[1.04] max-w-md text-zinc-50">
             Manage every country.<br />
-            <span className="text-white/40">From one place.</span>
+            <span className="text-zinc-500">From one place.</span>
           </h1>
-          <p className="mt-6 text-white/60 text-[15px] leading-relaxed max-w-md">
+          <p className="mt-6 text-zinc-400 text-[15px] leading-relaxed max-w-md">
             Edit hero, pricing, FAQs and branding for each landing page. Edit once, publish to
             its own domain — instantly.
           </p>
         </div>
-        <div className="relative font-mono text-[11px] uppercase tracking-[0.22em] text-white/40">
+        <div className="relative font-mono text-[11px] uppercase tracking-[0.22em] text-zinc-600">
           v1.0 · multi-tenant CMS
         </div>
       </div>
 
-      <div className="flex flex-col justify-center px-6 py-12 lg:px-16">
+      <div className="flex flex-col justify-center px-6 py-12 lg:px-16 bg-zinc-950">
         <div className="max-w-sm w-full mx-auto" data-testid="admin-login-card">
-          <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-neutral-500 mb-3 flex items-center gap-2">
+          <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-zinc-500 mb-3 flex items-center gap-2">
             <ShieldCheck className="h-3.5 w-3.5" />
             Admin sign-in
           </div>
-          <h2 className="font-display text-[32px] font-bold tracking-tight text-neutral-950">
+          <h2 className="font-display text-[32px] font-bold tracking-tight text-zinc-50">
             Welcome back.
           </h2>
-          <p className="text-[14px] text-neutral-500 mt-2">
+          <p className="text-[14px] text-zinc-400 mt-2">
             Sign in to manage your country landing pages.
           </p>
 
           <form onSubmit={onSubmit} noValidate className="mt-8 space-y-4" data-testid="admin-login-form">
             <div>
-              <Label htmlFor="email" className="text-[12.5px] font-medium text-neutral-700">Email</Label>
+              <Label htmlFor="email" className="text-[12.5px] font-medium text-zinc-300">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -84,7 +87,7 @@ export default function AdminLogin() {
               />
             </div>
             <div>
-              <Label htmlFor="password" className="text-[12.5px] font-medium text-neutral-700">Password</Label>
+              <Label htmlFor="password" className="text-[12.5px] font-medium text-zinc-300">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -99,7 +102,7 @@ export default function AdminLogin() {
 
             {error && (
               <div
-                className="text-[13px] text-red-700 bg-red-50 border border-red-200 rounded-lg p-3"
+                className="text-[13px] text-red-300 bg-red-950/40 border border-red-900/60 rounded-lg p-3"
                 data-testid="login-error"
               >
                 {error}
@@ -109,7 +112,7 @@ export default function AdminLogin() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 bg-[#0A0A0A] hover:bg-neutral-800 text-white rounded-full text-[14px] font-medium"
+              className="w-full h-12 bg-white hover:bg-zinc-200 text-zinc-950 rounded-full text-[14px] font-medium"
               data-testid="login-submit"
             >
               {loading ? (
@@ -120,7 +123,7 @@ export default function AdminLogin() {
             </Button>
           </form>
 
-          <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-400 text-center">
+          <p className="mt-8 font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-600 text-center">
             Protected area · Authorized personnel only
           </p>
         </div>

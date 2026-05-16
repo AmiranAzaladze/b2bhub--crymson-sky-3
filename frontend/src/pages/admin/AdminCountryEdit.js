@@ -129,7 +129,7 @@ export default function AdminCountryEdit() {
   if (loading || !country) {
     return (
       <div className="p-8 lg:p-12 grid place-items-center min-h-[60vh]">
-        <Loader2 className="h-5 w-5 animate-spin text-neutral-400" />
+        <Loader2 className="h-5 w-5 animate-spin text-zinc-500" />
       </div>
     );
   }
@@ -137,22 +137,22 @@ export default function AdminCountryEdit() {
   return (
     <div className="flex flex-col h-screen" data-testid="country-edit-page">
       {/* Top bar */}
-      <div className="sticky top-0 z-30 bg-white/85 backdrop-blur-xl border-b border-neutral-200 px-8 lg:px-12 py-4 flex items-center justify-between gap-4">
+      <div className="sticky top-0 z-30 bg-zinc-900/85 backdrop-blur-xl border-b border-zinc-800 px-8 lg:px-12 py-4 flex items-center justify-between gap-4">
         <div className="min-w-0">
-          <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500">
+          <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500">
             {country.slug} · {country.locale}
           </div>
-          <div className="font-display text-[20px] font-bold tracking-tight text-neutral-950 flex items-center gap-2 truncate">
+          <div className="font-display text-[20px] font-bold tracking-tight text-zinc-50 flex items-center gap-2 truncate">
             <span>{country.flag}</span>
             {country.brand_name}
             <span
               className={`inline-flex items-center gap-1.5 ml-2 px-2 py-0.5 rounded-full text-[10px] font-medium border ${
                 country.status === "published"
-                  ? "border-green-200 bg-green-50 text-green-800"
-                  : "border-neutral-200 bg-neutral-50 text-neutral-600"
+                  ? "border-green-900/60 bg-green-950/40 text-green-300"
+                  : "border-zinc-700 bg-zinc-800/60 text-zinc-400"
               }`}
             >
-              <span className={`h-1.5 w-1.5 rounded-full ${country.status === "published" ? "bg-green-500" : "bg-neutral-400"}`} />
+              <span className={`h-1.5 w-1.5 rounded-full ${country.status === "published" ? "bg-green-500" : "bg-zinc-500"}`} />
               {country.status}
             </span>
           </div>
@@ -163,7 +163,7 @@ export default function AdminCountryEdit() {
             href={`/preview/${country.slug}`}
             target="_blank"
             rel="noreferrer"
-            className="h-9 px-3 inline-flex items-center gap-1.5 text-[12.5px] font-medium text-neutral-700 hover:text-neutral-950 border border-neutral-200 rounded-full"
+            className="h-9 px-3 inline-flex items-center gap-1.5 text-[12.5px] font-medium text-zinc-300 hover:text-zinc-50 border border-zinc-700 hover:bg-zinc-800 rounded-full transition-colors"
             data-testid="preview-link"
           >
             <Eye className="h-3.5 w-3.5" /> Preview
@@ -172,7 +172,7 @@ export default function AdminCountryEdit() {
             variant="outline"
             size="sm"
             onClick={togglePublish}
-            className="h-9 px-3 rounded-full text-[12.5px] font-medium"
+            className="h-9 px-3 rounded-full text-[12.5px] font-medium border-zinc-700 bg-transparent text-zinc-200 hover:bg-zinc-800 hover:text-zinc-50"
             data-testid="toggle-publish"
           >
             {country.status === "published" ? "Unpublish" : "Publish"}
@@ -180,7 +180,7 @@ export default function AdminCountryEdit() {
           <Button
             onClick={save}
             disabled={!dirty || saving}
-            className="h-9 px-4 bg-[#0A0A0A] hover:bg-neutral-800 text-white rounded-full text-[12.5px] font-medium"
+            className="h-9 px-4 bg-white hover:bg-zinc-200 text-zinc-950 rounded-full text-[12.5px] font-medium disabled:opacity-40"
             data-testid="save-button"
           >
             {saving ? (
@@ -193,7 +193,7 @@ export default function AdminCountryEdit() {
       </div>
 
       {dirty && (
-        <div className="bg-amber-50 border-b border-amber-200 px-8 lg:px-12 py-2 text-[12.5px] text-amber-900 flex items-center gap-2">
+        <div className="bg-amber-950/40 border-b border-amber-900/60 px-8 lg:px-12 py-2 text-[12.5px] text-amber-300 flex items-center gap-2">
           <AlertTriangle className="h-3.5 w-3.5" />
           You have unsaved changes.
         </div>
@@ -203,12 +203,12 @@ export default function AdminCountryEdit() {
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto px-8 lg:px-12 py-8">
           <Tabs defaultValue="general" className="w-full">
-            <TabsList className="bg-neutral-100 mb-6">
-              <TabsTrigger value="general" data-testid="tab-general">General</TabsTrigger>
-              <TabsTrigger value="content" data-testid="tab-content">Content</TabsTrigger>
-              <TabsTrigger value="seo" data-testid="tab-seo">SEO</TabsTrigger>
-              <TabsTrigger value="b2bhub" data-testid="tab-b2bhub">B2BHub</TabsTrigger>
-              <TabsTrigger value="danger" data-testid="tab-danger">Danger</TabsTrigger>
+            <TabsList className="bg-zinc-900 border border-zinc-800 mb-6">
+              <TabsTrigger value="general" data-testid="tab-general" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">General</TabsTrigger>
+              <TabsTrigger value="content" data-testid="tab-content" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Content</TabsTrigger>
+              <TabsTrigger value="seo" data-testid="tab-seo" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">SEO</TabsTrigger>
+              <TabsTrigger value="b2bhub" data-testid="tab-b2bhub" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">B2BHub</TabsTrigger>
+              <TabsTrigger value="danger" data-testid="tab-danger" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Danger</TabsTrigger>
             </TabsList>
 
             {/* GENERAL */}
@@ -238,8 +238,8 @@ export default function AdminCountryEdit() {
                 </div>
                 <div className="grid grid-cols-2 gap-3 items-end">
                   <div>
-                    <Label className="text-[12px] font-medium text-neutral-700 block mb-1.5">Logo preview</Label>
-                    <div className="flex items-center gap-3 border border-neutral-200 bg-neutral-50 rounded-lg px-4 py-3">
+                    <Label className="text-[12px] font-medium text-zinc-300 block mb-1.5">Logo preview</Label>
+                    <div className="flex items-center gap-3 border border-zinc-800 bg-zinc-950/60 rounded-lg px-4 py-3">
                       <div
                         className="h-9 w-9 rounded-md grid place-items-center"
                         style={{ backgroundColor: country.brand_color }}
@@ -248,7 +248,7 @@ export default function AdminCountryEdit() {
                           {country.abbreviation || autoAbbreviation(country.brand_name)}
                         </span>
                       </div>
-                      <span className="font-display font-bold text-[16px] tracking-tight">
+                      <span className="font-display font-bold text-[16px] tracking-tight text-zinc-50">
                         {country.brand_name}
                       </span>
                     </div>
@@ -302,10 +302,10 @@ export default function AdminCountryEdit() {
             <TabsContent value="b2bhub" className="space-y-5">
               <Section title="B2BHub.ltd data" eyebrow="Integration">
                 <div className="flex items-center justify-between mb-3">
-                  <div className="text-[12.5px] text-neutral-600">
+                  <div className="text-[12.5px] text-zinc-300">
                     Source for company-formation metadata. Currently{" "}
                     <span className={`font-mono text-[10px] uppercase px-2 py-0.5 rounded-full ${
-                      b2bhub?.is_mocked ? "bg-amber-50 text-amber-800 border border-amber-200" : "bg-green-50 text-green-800 border border-green-200"
+                      b2bhub?.is_mocked ? "bg-amber-950/40 text-amber-300 border border-amber-900/60" : "bg-green-950/40 text-green-300 border border-green-900/60"
                     }`}>
                       {b2bhub?.is_mocked ? "MOCKED" : "LIVE"}
                     </span>
@@ -322,18 +322,18 @@ export default function AdminCountryEdit() {
                         toast.error("Failed");
                       }
                     }}
-                    className="h-8 text-[12px] rounded-full"
+                    className="h-8 text-[12px] rounded-full border-zinc-700 bg-transparent text-zinc-200 hover:bg-zinc-800 hover:text-zinc-50"
                   >
                     <RefreshCw className="h-3 w-3 mr-1.5" />
                     Refresh
                   </Button>
                 </div>
                 {b2bhub ? (
-                  <pre className="bg-neutral-950 text-neutral-200 rounded-lg p-4 text-[11.5px] overflow-x-auto font-mono leading-relaxed">
+                  <pre className="bg-zinc-950 text-zinc-200 rounded-lg p-4 text-[11.5px] overflow-x-auto font-mono leading-relaxed border border-zinc-800">
                     {JSON.stringify(b2bhub, null, 2)}
                   </pre>
                 ) : (
-                  <div className="text-[12.5px] text-neutral-500">Loading…</div>
+                  <div className="text-[12.5px] text-zinc-500">Loading…</div>
                 )}
               </Section>
             </TabsContent>
@@ -341,14 +341,14 @@ export default function AdminCountryEdit() {
             {/* DANGER */}
             <TabsContent value="danger" className="space-y-5">
               <Section title="Reset content" eyebrow="Danger zone">
-                <p className="text-[13px] text-neutral-600">
+                <p className="text-[13px] text-zinc-400">
                   Restore all sections of this country's landing page to the default template.
                   Country identity, branding and domain settings are not affected.
                 </p>
                 <Button
                   variant="outline"
                   onClick={resetContent}
-                  className="border-amber-300 text-amber-800 hover:bg-amber-50 rounded-full h-9 text-[12.5px]"
+                  className="border-amber-900/70 text-amber-300 bg-transparent hover:bg-amber-950/40 rounded-full h-9 text-[12.5px]"
                   data-testid="reset-content"
                 >
                   <RefreshCw className="h-3.5 w-3.5 mr-1.5" /> Reset to defaults
@@ -356,14 +356,14 @@ export default function AdminCountryEdit() {
               </Section>
 
               <Section title="Delete country">
-                <p className="text-[13px] text-neutral-600">
+                <p className="text-[13px] text-zinc-400">
                   Permanently delete this country, its content, and unlink the domain. This cannot
                   be undone.
                 </p>
                 <Button
                   variant="outline"
                   onClick={() => setDeleteOpen(true)}
-                  className="border-red-300 text-red-700 hover:bg-red-50 rounded-full h-9 text-[12.5px]"
+                  className="border-red-900/70 text-red-300 bg-transparent hover:bg-red-950/40 rounded-full h-9 text-[12.5px]"
                   data-testid="delete-country"
                 >
                   <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Delete this country
@@ -375,18 +375,18 @@ export default function AdminCountryEdit() {
       </div>
 
       <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <DialogContent className="sm:max-w-[440px] p-6 rounded-2xl">
+        <DialogContent className="sm:max-w-[440px] p-6 rounded-2xl bg-zinc-900 border-zinc-800">
           <DialogHeader>
-            <DialogTitle className="font-display text-[20px] font-bold tracking-tight">
+            <DialogTitle className="font-display text-[20px] font-bold tracking-tight text-zinc-50">
               Delete {country.brand_name}?
             </DialogTitle>
           </DialogHeader>
-          <p className="text-[13.5px] text-neutral-600 my-2">
-            All content for <span className="font-mono">{country.domain}</span> will be permanently
+          <p className="text-[13.5px] text-zinc-400 my-2">
+            All content for <span className="font-mono text-zinc-200">{country.domain}</span> will be permanently
             removed.
           </p>
           <div className="flex justify-end gap-2 mt-4">
-            <Button variant="outline" onClick={() => setDeleteOpen(false)} className="rounded-full">
+            <Button variant="outline" onClick={() => setDeleteOpen(false)} className="rounded-full border-zinc-700 bg-transparent text-zinc-200 hover:bg-zinc-800 hover:text-zinc-50">
               Cancel
             </Button>
             <Button onClick={remove} className="bg-red-600 hover:bg-red-700 text-white rounded-full" data-testid="confirm-delete">
@@ -580,7 +580,7 @@ function ContentEditor({ content, updateContent, updateContentRaw }) {
                   value={it.a || ""}
                   onChange={(e) => patch({ a: e.target.value })}
                   placeholder="Answer"
-                  className="w-full text-[13.5px] rounded-md border border-neutral-200 px-3 py-2 min-h-[70px] resize-none focus:outline-none focus:ring-2 focus:ring-neutral-300"
+                  className="w-full text-[13.5px] rounded-md border border-zinc-700 bg-zinc-950 text-zinc-100 placeholder:text-zinc-500 px-3 py-2 min-h-[70px] resize-none focus:outline-none focus:ring-2 focus:ring-zinc-600"
                 />
               </div>
             )}
@@ -639,8 +639,8 @@ function ContentEditor({ content, updateContent, updateContentRaw }) {
 
 function SectionAccordion({ value, title, children }) {
   return (
-    <AccordionItem value={value} className="border border-neutral-200 bg-white rounded-xl px-5 data-[state=open]:bg-white">
-      <AccordionTrigger className="font-display font-semibold text-[15px] tracking-tight py-4 hover:no-underline">
+    <AccordionItem value={value} className="border border-zinc-800 bg-zinc-900 rounded-xl px-5 data-[state=open]:bg-zinc-900">
+      <AccordionTrigger className="font-display font-semibold text-[15px] tracking-tight py-4 hover:no-underline text-zinc-50">
         {title}
       </AccordionTrigger>
       <AccordionContent className="pb-5 pt-1 space-y-3.5">{children}</AccordionContent>
