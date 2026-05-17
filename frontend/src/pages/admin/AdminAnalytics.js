@@ -116,17 +116,17 @@ export default function AdminAnalytics() {
   return (
     <div className="flex flex-col min-h-screen" data-testid="analytics-page">
       {/* Top bar */}
-      <div className="sticky top-0 z-30 bg-zinc-900/85 backdrop-blur-xl border-b border-zinc-800 px-8 lg:px-12 py-4 flex items-center justify-between gap-4 flex-wrap">
+      <div className="sticky top-14 md:top-0 z-30 bg-zinc-900/85 backdrop-blur-xl border-b border-zinc-800 px-4 sm:px-8 lg:px-12 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 flex-wrap">
         <div>
           <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500">Analytics</div>
-          <div className="font-display text-[22px] font-bold tracking-tight text-zinc-50">
+          <div className="font-display text-[20px] sm:text-[22px] font-bold tracking-tight text-zinc-50 truncate">
             {tenant === "all" ? "All landings" : countries.find((c) => c.slug === tenant)?.brand_name || tenant}
           </div>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           <Select value={tenant} onValueChange={setTenant}>
-            <SelectTrigger className="w-[180px] h-9 bg-zinc-900 border-zinc-700 text-zinc-100 text-[12.5px]" data-testid="tenant-select">
+            <SelectTrigger className="w-[150px] sm:w-[180px] h-9 bg-zinc-900 border-zinc-700 text-zinc-100 text-[12.5px]" data-testid="tenant-select">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -140,7 +140,7 @@ export default function AdminAnalytics() {
           </Select>
 
           <Select value={period} onValueChange={setPeriod}>
-            <SelectTrigger className="w-[150px] h-9 bg-zinc-900 border-zinc-700 text-zinc-100 text-[12.5px]" data-testid="period-select">
+            <SelectTrigger className="w-[130px] sm:w-[150px] h-9 bg-zinc-900 border-zinc-700 text-zinc-100 text-[12.5px]" data-testid="period-select">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -155,8 +155,8 @@ export default function AdminAnalytics() {
             className="h-9 px-3 border-zinc-700 bg-transparent text-zinc-200 hover:bg-zinc-800 hover:text-zinc-50 rounded-full text-[12.5px]"
             data-testid="refresh-button"
           >
-            <RefreshCw className={`h-3.5 w-3.5 mr-1.5 ${loading ? "animate-spin" : ""}`} />
-            Refresh
+            <RefreshCw className={`h-3.5 w-3.5 sm:mr-1.5 ${loading ? "animate-spin" : ""}`} />
+            <span className="hidden sm:inline">Refresh</span>
           </Button>
 
           <Button
@@ -165,8 +165,9 @@ export default function AdminAnalytics() {
             className="h-9 px-3 bg-white hover:bg-zinc-200 text-zinc-950 rounded-full text-[12.5px]"
             data-testid="seed-demo-button"
           >
-            <Database className="h-3.5 w-3.5 mr-1.5" />
-            Generate demo data
+            <Database className="h-3.5 w-3.5 sm:mr-1.5" />
+            <span className="hidden sm:inline">Generate demo data</span>
+            <span className="sm:hidden">Demo</span>
           </Button>
           <Button
             variant="outline" size="sm" onClick={clearDemo} disabled={busy}
@@ -178,7 +179,7 @@ export default function AdminAnalytics() {
         </div>
       </div>
 
-      <div className="flex-1 p-8 lg:p-12 max-w-[1400px] w-full mx-auto space-y-8">
+      <div className="flex-1 p-4 sm:p-8 lg:p-12 max-w-[1400px] w-full mx-auto space-y-6 sm:space-y-8">
         {/* KPI cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <Kpi icon={Eye} label="Page views" value={overview?.current?.page_views} delta={overview?.delta?.page_views} />

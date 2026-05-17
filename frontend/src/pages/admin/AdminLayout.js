@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import api from "../../api/client";
-import { LogOut, Plus, Globe, ChevronRight, Loader2, BarChart3 } from "lucide-react";
+import { LogOut, Plus, Globe, ChevronRight, Loader2, BarChart3, Menu, X } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import {
   Dialog,
@@ -28,6 +28,7 @@ export default function AdminLayout() {
   const [countries, setCountries] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [addOpen, setAddOpen] = React.useState(false);
+  const [navOpen, setNavOpen] = React.useState(false);
 
   const refresh = React.useCallback(async () => {
     setLoading(true);
@@ -41,6 +42,18 @@ export default function AdminLayout() {
 
   React.useEffect(() => { refresh(); }, [refresh]);
 
+  // Auto-close mobile drawer on route change
+  React.useEffect(() => { setNavOpen(false); }, [location.pathname]);
+
+  // Lock body scroll while drawer is open on mobile
+  React.useEffect(() => {
+    if (navOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [navOpen]);
+
   const onLogout = () => {
     logout();
     navigate("/admin/login");
@@ -48,15 +61,57 @@ export default function AdminLayout() {
 
   return (
     <CountriesContext.Provider value={{ countries, refresh }}>
-      <div className="min-h-screen bg-zinc-950 text-zinc-100 flex" data-testid="admin-shell">
-        <aside className="w-72 shrink-0 bg-zinc-900 border-r border-zinc-800 flex flex-col h-screen sticky top-0">
-          <div className="px-5 py-5 border-b border-zinc-800">
-            <NavLink to="/admin" className="flex items-center gap-2" data-testid="admin-brand">
-              <div className="h-7 w-7 rounded-md bg-white grid place-items-center">
+      <div className="min-h-screen bg-zinc-950 text-zinc-100 md:flex" data-testid="admin-shell">
+        {/* Mobile top bar (md:hidden) */}
+        <header className="md:hidden sticky top-0 z-40 flex items-center justify-between gap-3 px-4 h-14 bg-zinc-900/95 backdrop-blur-xl border-b border-zinc-800">
+          <button
+            onClick={() => setNavOpen(true)}
+            className="h-9 w-9 grid place-items-center rounded-md hover:bg-zinc-800 text-zinc-300 hover:text-zinc-50 transition-colors"
+            data-testid="open-mobile-nav"
+            aria-label="Open navigation"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+          <NavLink to="/admin" className="flex items-center gap-2 min-w-0">
+            <div className="h-6 w-6 rounded-md bg-white grid place-items-center shrink-0">
+              <span className="text-zinc-950 font-display font-bold text-[11px]">SF</span>
+            </div>
+            <span className="font-display font-bold text-[14px] tracking-tight text-zinc-50 truncate">
+              Swift Formations
+            </span>
+          </NavLink>
+          <button
+            onClick={onLogout}
+            className="h-9 w-9 grid place-items-center rounded-md hover:bg-zinc-800 text-zinc-300 hover:text-zinc-50 transition-colors"
+            data-testid="admin-logout-mobile"
+            aria-label="Log out"
+          >
+            <LogOut className="h-4 w-4" />
+          </button>
+        </header>
+
+        {/* Backdrop (mobile drawer) */}
+        {navOpen && (
+          <button
+            onClick={() => setNavOpen(false)}
+            className="md:hidden fixed inset-0 z-40 bg-black/60 backdrop-blur-sm"
+            aria-label="Close navigation"
+            data-testid="mobile-nav-backdrop"
+          />
+        )}
+
+        <aside
+          className={`fixed md:sticky inset-y-0 left-0 top-0 z-50 w-72 shrink-0 bg-zinc-900 border-r border-zinc-800 flex flex-col h-screen transform transition-transform duration-200 ease-out
+            ${navOpen ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+          data-testid="admin-sidebar"
+        >
+          <div className="px-5 py-5 border-b border-zinc-800 flex items-center justify-between gap-2">
+            <NavLink to="/admin" className="flex items-center gap-2 min-w-0" data-testid="admin-brand">
+              <div className="h-7 w-7 rounded-md bg-white grid place-items-center shrink-0">
                 <span className="text-zinc-950 font-display font-bold text-[13px]">SF</span>
               </div>
-              <div>
-                <div className="font-display font-bold text-[15px] leading-none tracking-tight text-zinc-50">
+              <div className="min-w-0">
+                <div className="font-display font-bold text-[15px] leading-none tracking-tight text-zinc-50 truncate">
                   Swift Formations
                 </div>
                 <div className="font-mono text-[9px] uppercase tracking-[0.22em] text-zinc-500 mt-1">
@@ -64,6 +119,14 @@ export default function AdminLayout() {
                 </div>
               </div>
             </NavLink>
+            <button
+              onClick={() => setNavOpen(false)}
+              className="md:hidden h-8 w-8 grid place-items-center rounded-md hover:bg-zinc-800 text-zinc-400 hover:text-zinc-100 transition-colors shrink-0"
+              data-testid="close-mobile-nav"
+              aria-label="Close navigation"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
 
           <div className="flex-1 overflow-y-auto px-3 py-4">
@@ -237,8 +300,8 @@ function AddCountryDialog({ open, onOpenChange, onCreated }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[560px] p-0 overflow-hidden rounded-2xl border-zinc-800 bg-zinc-900" data-testid="add-country-dialog">
-        <DialogHeader className="px-7 pt-7 pb-2 text-left">
+      <DialogContent className="sm:max-w-[560px] p-0 overflow-hidden rounded-2xl border-zinc-800 bg-zinc-900 max-h-[92vh] overflow-y-auto" data-testid="add-country-dialog">
+        <DialogHeader className="px-5 sm:px-7 pt-7 pb-2 text-left">
           <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500 mb-2">
             New country
           </div>
@@ -250,8 +313,8 @@ function AddCountryDialog({ open, onOpenChange, onCreated }) {
             everything afterwards.
           </DialogDescription>
         </DialogHeader>
-        <form onSubmit={submit} noValidate className="px-7 pb-7 pt-3 space-y-3" data-testid="add-country-form">
-          <div className="grid grid-cols-2 gap-3">
+        <form onSubmit={submit} noValidate className="px-5 sm:px-7 pb-7 pt-3 space-y-3" data-testid="add-country-form">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <DarkField label="Slug (URL key)" id="slug">
               <Input id="slug" value={form.slug} onChange={onChange("slug")} placeholder="es" className="h-10" data-testid="new-slug" />
             </DarkField>
@@ -276,7 +339,7 @@ function AddCountryDialog({ open, onOpenChange, onCreated }) {
               <Input id="currency_symbol" value={form.currency_symbol} onChange={onChange("currency_symbol")} className="h-10" />
             </DarkField>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <DarkField label="Brand color" id="brand_color">
               <Input id="brand_color" type="color" value={form.brand_color} onChange={onChange("brand_color")} className="h-10 p-1" />
             </DarkField>

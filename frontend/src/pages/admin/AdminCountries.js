@@ -36,16 +36,16 @@ export default function AdminCountries() {
   }, [countries, filter]);
 
   return (
-    <div className="p-8 lg:p-12 max-w-6xl" data-testid="admin-countries-page">
-      <div className="mb-10 flex items-start justify-between gap-4 flex-wrap">
-        <div>
+    <div className="p-4 sm:p-8 lg:p-12 max-w-6xl" data-testid="admin-countries-page">
+      <div className="mb-8 sm:mb-10 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+        <div className="min-w-0">
           <div className="font-mono text-[11px] uppercase tracking-[0.22em] text-zinc-500 mb-3">
             Dashboard
           </div>
-          <h1 className="font-display text-4xl font-bold tracking-[-0.03em] text-zinc-50">
+          <h1 className="font-display text-3xl sm:text-4xl font-bold tracking-[-0.03em] text-zinc-50">
             All country landings.
           </h1>
-          <p className="text-zinc-400 mt-2 text-[15px] max-w-2xl">
+          <p className="text-zinc-400 mt-2 text-[14px] sm:text-[15px] max-w-2xl">
             Manage every country from one place. Each landing serves its own domain — edit content
             on the right, publish when ready. Sync from B2BHub.ltd to import or refresh data for
             every jurisdiction in their catalog.
@@ -53,7 +53,7 @@ export default function AdminCountries() {
         </div>
         <Button
           onClick={() => setSyncOpen(true)}
-          className="bg-white hover:bg-zinc-200 text-zinc-950 rounded-full h-10 px-5 text-[13px] font-medium"
+          className="bg-white hover:bg-zinc-200 text-zinc-950 rounded-full h-10 px-5 text-[13px] font-medium w-full sm:w-auto shrink-0"
           data-testid="open-sync-button"
         >
           <Database className="h-4 w-4 mr-2" />
@@ -61,7 +61,7 @@ export default function AdminCountries() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-3 gap-4 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-8 sm:mb-10">
         <StatCard icon={Globe} label="Countries" value={stats.total} />
         <StatCard icon={CheckCircle2} label="Published" value={stats.published} accent="green" />
         <StatCard icon={Clock} label="Draft" value={stats.draft} />
@@ -72,16 +72,16 @@ export default function AdminCountries() {
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           placeholder="Filter by name, slug or domain…"
-          className="flex-1 h-10 rounded-md border border-zinc-800 bg-zinc-900 px-3 text-[13px] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-700"
+          className="flex-1 h-10 rounded-md border border-zinc-800 bg-zinc-900 px-3 text-[13px] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:ring-2 focus:ring-zinc-700 min-w-0"
           data-testid="country-filter"
         />
-        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500">
+        <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500 whitespace-nowrap">
           {filtered.length} / {countries.length}
         </span>
       </div>
 
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
-        <div className="grid grid-cols-12 px-6 py-3 border-b border-zinc-800 bg-zinc-900/60">
+        <div className="hidden sm:grid grid-cols-12 px-6 py-3 border-b border-zinc-800 bg-zinc-900/60">
           <div className="col-span-4 font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500">Country</div>
           <div className="col-span-4 font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500">Domain</div>
           <div className="col-span-2 font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500">Status</div>
@@ -89,7 +89,7 @@ export default function AdminCountries() {
         </div>
 
         {filtered.length === 0 ? (
-          <div className="px-6 py-16 text-center text-zinc-500">
+          <div className="px-6 py-16 text-center text-zinc-500 text-[13px]">
             {countries.length === 0
               ? "No countries yet. Click 'Sync from B2BHub' or use the + button in the sidebar to add one."
               : "No matches."}
@@ -99,10 +99,10 @@ export default function AdminCountries() {
             <Link
               to={`/admin/countries/${c.id}`}
               key={c.id}
-              className="grid grid-cols-12 px-6 py-4 border-b border-zinc-800/70 last:border-0 hover:bg-zinc-800/40 transition-colors items-center group"
+              className="flex sm:grid sm:grid-cols-12 px-4 sm:px-6 py-3.5 sm:py-4 border-b border-zinc-800/70 last:border-0 hover:bg-zinc-800/40 transition-colors items-center group gap-3 sm:gap-0"
               data-testid={`country-row-${c.slug}`}
             >
-              <div className="col-span-4 flex items-center gap-3">
+              <div className="sm:col-span-4 flex items-center gap-3 min-w-0 flex-1 sm:flex-none">
                 <div
                   className="h-9 w-9 rounded-md grid place-items-center shrink-0"
                   style={{ backgroundColor: c.brand_color }}
@@ -111,21 +111,22 @@ export default function AdminCountries() {
                     {c.abbreviation}
                   </span>
                 </div>
-                <div className="min-w-0">
-                  <div className="font-display font-semibold text-[15px] text-zinc-50 truncate flex items-center gap-2">
+                <div className="min-w-0 flex-1">
+                  <div className="font-display font-semibold text-[14px] sm:text-[15px] text-zinc-50 truncate flex items-center gap-2">
                     <span>{c.flag}</span>
-                    {c.brand_name}
+                    <span className="truncate">{c.brand_name}</span>
                   </div>
-                  <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500 mt-0.5">
+                  <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-zinc-500 mt-0.5 truncate">
                     /{c.slug} · {c.currency_symbol || c.currency}
+                    <span className="sm:hidden"> · {c.domain}</span>
                   </div>
                 </div>
               </div>
-              <div className="col-span-4 flex items-center gap-1.5 text-[13.5px] text-zinc-300">
-                <ExternalLink className="h-3.5 w-3.5 text-zinc-500" />
+              <div className="hidden sm:flex sm:col-span-4 items-center gap-1.5 text-[13.5px] text-zinc-300 min-w-0">
+                <ExternalLink className="h-3.5 w-3.5 text-zinc-500 shrink-0" />
                 <span className="truncate">{c.domain}</span>
               </div>
-              <div className="col-span-2">
+              <div className="hidden sm:block sm:col-span-2">
                 <span
                   className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium border ${
                     c.status === "published"
@@ -141,10 +142,17 @@ export default function AdminCountries() {
                   {c.status}
                 </span>
               </div>
-              <div className="col-span-2 flex justify-end">
+              <div className="flex sm:col-span-2 sm:justify-end items-center gap-1 shrink-0">
+                <span
+                  className={`sm:hidden h-2 w-2 rounded-full ${
+                    c.status === "published" ? "bg-green-500" : "bg-zinc-500"
+                  }`}
+                  title={c.status}
+                />
+                <ArrowRight className="h-4 w-4 text-zinc-500 sm:hidden" />
                 <Button
                   variant="ghost" size="sm"
-                  className="text-[12.5px] text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800"
+                  className="hidden sm:inline-flex text-[12.5px] text-zinc-400 hover:text-zinc-50 hover:bg-zinc-800"
                 >
                   Edit
                   <ArrowRight className="h-3.5 w-3.5 ml-1" />
@@ -193,14 +201,14 @@ function SyncDialog({ open, onOpenChange, onDone }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="sm:max-w-[560px] p-0 overflow-hidden rounded-2xl border-zinc-800 bg-zinc-900"
+        className="sm:max-w-[560px] p-0 overflow-hidden rounded-2xl border-zinc-800 bg-zinc-900 max-h-[92vh] overflow-y-auto"
         data-testid="sync-dialog"
       >
-        <DialogHeader className="px-7 pt-7 pb-2 text-left">
+        <DialogHeader className="px-5 sm:px-7 pt-7 pb-2 text-left">
           <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500 mb-2">
             Integration · b2bhub.ltd
           </div>
-          <DialogTitle className="font-display text-[24px] font-bold tracking-tight text-zinc-50">
+          <DialogTitle className="font-display text-[22px] sm:text-[24px] font-bold tracking-tight text-zinc-50">
             Sync country landings
           </DialogTitle>
           <DialogDescription className="text-[13px] text-zinc-400 mt-1">
@@ -209,7 +217,7 @@ function SyncDialog({ open, onOpenChange, onDone }) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="px-7 pb-7 pt-3 space-y-4">
+        <div className="px-5 sm:px-7 pb-7 pt-3 space-y-4">
           <div className="rounded-lg border border-zinc-800 bg-zinc-950/60 p-4 space-y-2 text-[12.5px]">
             <Row k="API key" v={<span className="font-mono text-zinc-300">b2b_d8f0…d7d5ca</span>} />
             <Row k="Source" v={

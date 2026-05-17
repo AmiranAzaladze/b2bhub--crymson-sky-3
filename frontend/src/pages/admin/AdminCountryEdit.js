@@ -135,18 +135,18 @@ export default function AdminCountryEdit() {
   }
 
   return (
-    <div className="flex flex-col h-screen" data-testid="country-edit-page">
+    <div className="flex flex-col min-h-screen" data-testid="country-edit-page">
       {/* Top bar */}
-      <div className="sticky top-0 z-30 bg-zinc-900/85 backdrop-blur-xl border-b border-zinc-800 px-8 lg:px-12 py-4 flex items-center justify-between gap-4">
+      <div className="sticky top-14 md:top-0 z-30 bg-zinc-900/85 backdrop-blur-xl border-b border-zinc-800 px-4 sm:px-8 lg:px-12 py-3 sm:py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="min-w-0">
           <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500">
             {country.slug} · {country.locale}
           </div>
-          <div className="font-display text-[20px] font-bold tracking-tight text-zinc-50 flex items-center gap-2 truncate">
+          <div className="font-display text-[18px] sm:text-[20px] font-bold tracking-tight text-zinc-50 flex items-center gap-2 flex-wrap">
             <span>{country.flag}</span>
-            {country.brand_name}
+            <span className="truncate max-w-[60vw] sm:max-w-none">{country.brand_name}</span>
             <span
-              className={`inline-flex items-center gap-1.5 ml-2 px-2 py-0.5 rounded-full text-[10px] font-medium border ${
+              className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-medium border ${
                 country.status === "published"
                   ? "border-green-900/60 bg-green-950/40 text-green-300"
                   : "border-zinc-700 bg-zinc-800/60 text-zinc-400"
@@ -158,7 +158,7 @@ export default function AdminCountryEdit() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <a
             href={`/preview/${country.slug}`}
             target="_blank"
@@ -180,7 +180,7 @@ export default function AdminCountryEdit() {
           <Button
             onClick={save}
             disabled={!dirty || saving}
-            className="h-9 px-4 bg-white hover:bg-zinc-200 text-zinc-950 rounded-full text-[12.5px] font-medium disabled:opacity-40"
+            className="h-9 px-4 bg-white hover:bg-zinc-200 text-zinc-950 rounded-full text-[12.5px] font-medium disabled:opacity-40 ml-auto sm:ml-0"
             data-testid="save-button"
           >
             {saving ? (
@@ -193,17 +193,17 @@ export default function AdminCountryEdit() {
       </div>
 
       {dirty && (
-        <div className="bg-amber-950/40 border-b border-amber-900/60 px-8 lg:px-12 py-2 text-[12.5px] text-amber-300 flex items-center gap-2">
-          <AlertTriangle className="h-3.5 w-3.5" />
+        <div className="bg-amber-950/40 border-b border-amber-900/60 px-4 sm:px-8 lg:px-12 py-2 text-[12.5px] text-amber-300 flex items-center gap-2">
+          <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
           You have unsaved changes.
         </div>
       )}
 
       {/* Body */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto px-8 lg:px-12 py-8">
+      <div className="flex-1">
+        <div className="max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 py-6 sm:py-8">
           <Tabs defaultValue="general" className="w-full">
-            <TabsList className="bg-zinc-900 border border-zinc-800 mb-6">
+            <TabsList className="bg-zinc-900 border border-zinc-800 mb-6 w-full sm:w-auto overflow-x-auto flex justify-start no-scrollbar">
               <TabsTrigger value="general" data-testid="tab-general" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">General</TabsTrigger>
               <TabsTrigger value="content" data-testid="tab-content" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Content</TabsTrigger>
               <TabsTrigger value="seo" data-testid="tab-seo" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">SEO</TabsTrigger>
@@ -214,15 +214,15 @@ export default function AdminCountryEdit() {
             {/* GENERAL */}
             <TabsContent value="general" className="space-y-5">
               <Section title="Identity" eyebrow="General">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <Field label="Slug" value={country.slug} onChange={(v) => updateCountry({ slug: v })} testid="field-slug" />
                   <Field label="Domain" value={country.domain} onChange={(v) => updateCountry({ domain: v })} hint="auto SSL" testid="field-domain" />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <Field label="Name (short)" value={country.name} onChange={(v) => updateCountry({ name: v })} testid="field-name" />
                   <Field label="Long name" value={country.long_name} onChange={(v) => updateCountry({ long_name: v })} />
                 </div>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <Field label="Flag" value={country.flag} onChange={(v) => updateCountry({ flag: v })} />
                   <Field label="Locale" value={country.locale} onChange={(v) => updateCountry({ locale: v })} />
                   <Field label="Country code" value={country.country_code} onChange={(v) => updateCountry({ country_code: v })} />
@@ -231,12 +231,12 @@ export default function AdminCountryEdit() {
 
               <Section title="Branding">
                 <Field label="Brand name" value={country.brand_name} onChange={(v) => updateCountry({ brand_name: v })} testid="field-brand-name" />
-                <div className="grid grid-cols-3 gap-3 items-end">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
                   <Field label="Auto abbreviation" value={country.abbreviation} onChange={(v) => updateCountry({ abbreviation: v })} hint="logo" testid="field-abbreviation" />
                   <Field label="Brand color" type="color" value={country.brand_color} onChange={(v) => updateCountry({ brand_color: v })} testid="field-brand-color" />
                   <Field label="Accent color" type="color" value={country.accent_color} onChange={(v) => updateCountry({ accent_color: v })} testid="field-accent-color" />
                 </div>
-                <div className="grid grid-cols-2 gap-3 items-end">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-end">
                   <div>
                     <Label className="text-[12px] font-medium text-zinc-300 block mb-1.5">Logo preview</Label>
                     <div className="flex items-center gap-3 border border-zinc-800 bg-zinc-950/60 rounded-lg px-4 py-3">
@@ -257,15 +257,15 @@ export default function AdminCountryEdit() {
               </Section>
 
               <Section title="Authority & legal">
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <Field label="Currency" value={country.currency} onChange={(v) => updateCountry({ currency: v })} />
                   <Field label="Symbol" value={country.currency_symbol} onChange={(v) => updateCountry({ currency_symbol: v })} />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <Field label="Capital city / Registered office hub" value={country.capital} onChange={(v) => updateCountry({ capital: v })} />
                   <Field label="Company type" value={country.company_type} onChange={(v) => updateCountry({ company_type: v })} />
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <Field label="Authority name" value={country.authority_name} onChange={(v) => updateCountry({ authority_name: v })} />
                   <Field label="Authority short code" value={country.authority_short} onChange={(v) => updateCountry({ authority_short: v })} />
                 </div>
@@ -408,14 +408,14 @@ function ContentEditor({ content, updateContent, updateContentRaw }) {
     <div className="space-y-5">
       <Section title="Hero" eyebrow="Section">
         <Field label="Badge text" value={c.hero?.badge} onChange={(v) => updateContent("hero", { badge: v })} />
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Headline prefix" value={c.hero?.headline_prefix} onChange={(v) => updateContent("hero", { headline_prefix: v })} />
           <Field label="Highlight" value={c.hero?.headline_highlight} onChange={(v) => updateContent("hero", { headline_highlight: v })} hint="boxed" />
         </div>
         <Field label="Headline suffix (price line)" value={c.hero?.headline_suffix} onChange={(v) => updateContent("hero", { headline_suffix: v })} />
         <Field label="Sub-headline" multiline value={c.hero?.sub} onChange={(v) => updateContent("hero", { sub: v })} />
         <Field label="Fee note" value={c.hero?.fee_note} onChange={(v) => updateContent("hero", { fee_note: v })} />
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Primary CTA" value={c.hero?.cta_primary} onChange={(v) => updateContent("hero", { cta_primary: v })} />
           <Field label="Secondary CTA" value={c.hero?.cta_secondary} onChange={(v) => updateContent("hero", { cta_secondary: v })} />
         </div>
@@ -442,7 +442,7 @@ function ContentEditor({ content, updateContent, updateContentRaw }) {
 
         <SectionAccordion value="how" title="How it works">
           <Field label="Eyebrow" value={c.how_it_works?.eyebrow} onChange={(v) => updateContent("how_it_works", { eyebrow: v })} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Title" value={c.how_it_works?.title} onChange={(v) => updateContent("how_it_works", { title: v })} />
             <Field label="Title secondary" value={c.how_it_works?.title_secondary} onChange={(v) => updateContent("how_it_works", { title_secondary: v })} />
           </div>
@@ -469,7 +469,7 @@ function ContentEditor({ content, updateContent, updateContentRaw }) {
 
         <SectionAccordion value="pricing" title="Pricing">
           <Field label="Eyebrow" value={c.pricing?.eyebrow} onChange={(v) => updateContent("pricing", { eyebrow: v })} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Title" value={c.pricing?.title} onChange={(v) => updateContent("pricing", { title: v })} />
             <Field label="Title secondary" value={c.pricing?.title_secondary} onChange={(v) => updateContent("pricing", { title_secondary: v })} />
           </div>
@@ -504,7 +504,7 @@ function ContentEditor({ content, updateContent, updateContentRaw }) {
 
         <SectionAccordion value="benefits" title="Benefits">
           <Field label="Eyebrow" value={c.benefits?.eyebrow} onChange={(v) => updateContent("benefits", { eyebrow: v })} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Title" value={c.benefits?.title} onChange={(v) => updateContent("benefits", { title: v })} />
             <Field label="Title secondary" value={c.benefits?.title_secondary} onChange={(v) => updateContent("benefits", { title_secondary: v })} />
           </div>
@@ -534,11 +534,11 @@ function ContentEditor({ content, updateContent, updateContentRaw }) {
 
         <SectionAccordion value="testimonials" title="Testimonials">
           <Field label="Eyebrow" value={c.testimonials?.eyebrow} onChange={(v) => updateContent("testimonials", { eyebrow: v })} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Title" value={c.testimonials?.title} onChange={(v) => updateContent("testimonials", { title: v })} />
             <Field label="Title secondary" value={c.testimonials?.title_secondary} onChange={(v) => updateContent("testimonials", { title_secondary: v })} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Rating" value={c.testimonials?.rating} onChange={(v) => updateContent("testimonials", { rating: v })} />
             <Field label="Rating subtext" value={c.testimonials?.rating_sub} onChange={(v) => updateContent("testimonials", { rating_sub: v })} />
           </div>
@@ -564,7 +564,7 @@ function ContentEditor({ content, updateContent, updateContentRaw }) {
         <SectionAccordion value="faqs" title="FAQs">
           <Field label="Eyebrow" value={c.faqs?.eyebrow} onChange={(v) => updateContent("faqs", { eyebrow: v })} />
           <Field label="Title" value={c.faqs?.title} onChange={(v) => updateContent("faqs", { title: v })} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Contact line" value={c.faqs?.contact_line} onChange={(v) => updateContent("faqs", { contact_line: v })} />
             <Field label="Contact CTA" value={c.faqs?.contact_cta} onChange={(v) => updateContent("faqs", { contact_cta: v })} />
           </div>
@@ -590,12 +590,12 @@ function ContentEditor({ content, updateContent, updateContentRaw }) {
 
         <SectionAccordion value="final" title="Final CTA">
           <Field label="Eyebrow" value={c.final_cta?.eyebrow} onChange={(v) => updateContent("final_cta", { eyebrow: v })} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Headline" value={c.final_cta?.headline} onChange={(v) => updateContent("final_cta", { headline: v })} />
             <Field label="Headline secondary" value={c.final_cta?.headline_secondary} onChange={(v) => updateContent("final_cta", { headline_secondary: v })} />
           </div>
           <Field label="Sub" multiline value={c.final_cta?.sub} onChange={(v) => updateContent("final_cta", { sub: v })} />
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Primary CTA" value={c.final_cta?.cta_primary} onChange={(v) => updateContent("final_cta", { cta_primary: v })} />
             <Field label="Secondary CTA" value={c.final_cta?.cta_secondary} onChange={(v) => updateContent("final_cta", { cta_secondary: v })} />
           </div>
