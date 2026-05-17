@@ -10,10 +10,11 @@ Single admin panel managing landing pages for many countries (own domain each), 
 
 ## What's Implemented (Dec 2025)
 ### CMS
-- 5 country landings seeded (UK, UA, DE, FR, US), each with own branding/currency/authority/copy
+- 253 country landings seeded via B2BHub bulk sync (248 from B2BHub catalog + 5 originals), each with own branding/currency/authority/copy
 - Admin (dark mode): login, sidebar w/ country list + status, edit page (General / Content / SEO / B2BHub / Danger), add/delete/publish/reset, auto-logo
 - Public landing resolves tenant by hostname or ?tenant=/preview/:slug
-- B2BHub: MOCKED with refresh button + visible tag
+- B2BHub: REAL API (`/app/backend/b2bhub.py`) — 248 confirmed slugs, ISO-2-derived flag emojis, dynamic registrar/timeline/pricing pulled per country
+- Bulk sync endpoint `POST /api/admin/b2bhub/sync` + Admin UI dialog in `AdminCountries.js`
 
 ### Analytics
 - **Backend** (`/app/backend/analytics.py`):
@@ -41,11 +42,11 @@ Single admin panel managing landing pages for many countries (own domain each), 
 - Applied 2 safety fixes: tolerant `/api/track` schema, defensive `cached_map` init
 
 ## Backlog
-- P1 Real B2BHub.ltd integration (replace mock)
 - P1 ip-api rate-limit semaphore (45/min free tier)
+- P1 Next.js port for SSR/per-domain SEO
 - P2 Coalesce admin analytics into single `/dashboard` endpoint (currently 13 parallel calls per refresh)
 - P2 CSV/JSON export from analytics
-- P2 Next.js port for SSR/per-domain SEO
+- P2 Localized content per country (multi-language)
 - P3 Bot filtering / spam guard on /api/track
 - P3 GDPR: IP hashing / last-octet masking toggle
 

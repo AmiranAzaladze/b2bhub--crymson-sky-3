@@ -23,7 +23,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, EmailStr, Field
 
-from b2bhub import fetch_b2bhub_data
+from b2bhub import fetch_b2bhub_data, bulk_sync_countries, list_country_slugs
 from seed_data import SEED_COUNTRIES, auto_abbreviation, default_content_for
 import analytics
 
@@ -261,6 +261,7 @@ async def ensure_indexes() -> None:
     await db.events.create_index("session_id")
     await db.events.create_index("is_demo")
     await db.ip_geo.create_index("ip", unique=True)
+    await db.b2bhub_cache.create_index("key", unique=True)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -511,6 +512,26 @@ async def reset_content(country_id: str, user: Dict[str, Any] = Depends(get_curr
 @api.get("/admin/b2bhub/{country_code}")
 async def admin_b2bhub(country_code: str, user: Dict[str, Any] = Depends(get_current_user)):
     return await fetch_b2bhub_data(country_code)
+
+
+class SyncRequest(BaseModel):
+    slugs: Optional[List[str]] = None
+    overwrite_content: bool = False
+
+
+@api.get("/admin/b2bhub/slugs/available")
+async def b2bhub_available_slugs(user: Dict[str, Any] = Depends(get_current_user)):
+    slugs, source = await list_country_slugs(db)
+    return {"slugs": slugs, "count": len(slugs), "source": source}
+
+
+@api.post("/admin/b2bhub/sync")
+async def b2bhub_sync(body: SyncRequest, user: Dict[str, Any] = Depends(get_current_user)):
+    return await bulk_sync_countries(
+        db,
+        slugs=body.slugs,
+        overwrite_content=body.overwrite_content,
+    )
 
 
 # ─── Analytics: public ingest ───
