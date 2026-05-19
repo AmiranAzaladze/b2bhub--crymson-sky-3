@@ -99,43 +99,43 @@ export default function MobileMenu({ open, onClose, country, onCTAClick }) {
           </div>
 
           {/* Main nav + content (scrollable if needed) */}
-          <div className="relative flex-1 overflow-y-auto px-5 pb-6">
+          <div className="relative flex-1 overflow-y-auto px-5 pb-4">
             <motion.div
               initial="hidden"
               animate="show"
               variants={{
                 hidden: {},
-                show: { transition: { staggerChildren: 0.05, delayChildren: 0.08 } },
+                show: { transition: { staggerChildren: 0.04, delayChildren: 0.06 } },
               }}
             >
               <motion.div
                 variants={{ hidden: { opacity: 0, y: 8 }, show: { opacity: 1, y: 0 } }}
-                className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40 mt-4 mb-6"
+                className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40 mt-2 mb-3"
               >
                 Menu
               </motion.div>
 
-              <nav className="space-y-1">
+              <nav className="space-y-0">
                 {navItems.map((item, i) => (
                   <motion.a
                     key={item.href}
                     href={item.href}
                     onClick={(e) => { e.preventDefault(); handleNavClick(item.href); }}
                     variants={{
-                      hidden: { opacity: 0, y: 16 },
+                      hidden: { opacity: 0, y: 12 },
                       show: { opacity: 1, y: 0 },
                     }}
-                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-                    className="group flex items-baseline gap-4 py-3 border-b border-white/10 hover:border-white/30 transition-colors"
+                    transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                    className="group flex items-baseline gap-4 py-2.5 border-b border-white/10 hover:border-white/30 transition-colors"
                     data-testid={`mobile-nav-${item.label.toLowerCase().replace(/\s+/g, "-")}`}
                   >
-                    <span className="font-mono text-[11px] text-white/30 tabular-nums w-7">
+                    <span className="font-mono text-[11px] text-white/30 tabular-nums w-6">
                       {String(i + 1).padStart(2, "0")}
                     </span>
-                    <span className="font-display text-[28px] font-bold tracking-[-0.025em] leading-tight flex-1">
+                    <span className="font-display text-[22px] font-bold tracking-[-0.025em] leading-tight flex-1">
                       {item.label}
                     </span>
-                    <ArrowUpRight className="h-5 w-5 text-white/40 group-hover:text-white transition-colors -translate-y-0.5" />
+                    <ArrowUpRight className="h-4 w-4 text-white/40 group-hover:text-white transition-colors -translate-y-0.5" />
                   </motion.a>
                 ))}
               </nav>
@@ -143,19 +143,19 @@ export default function MobileMenu({ open, onClose, country, onCTAClick }) {
               {/* Primary CTA */}
               <motion.div
                 variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
-                transition={{ duration: 0.45 }}
-                className="mt-8"
+                transition={{ duration: 0.4 }}
+                className="mt-5"
               >
                 <Button
                   onClick={() => { onClose(); onCTAClick?.(); }}
-                  className="w-full h-14 rounded-full text-[15px] font-medium hover:opacity-90"
+                  className="w-full h-12 rounded-full text-[14px] font-medium hover:opacity-90"
                   style={{ backgroundColor: accent, color: "#fff" }}
                   data-testid="mobile-menu-cta"
                 >
                   Start now
-                  <ArrowUpRight className="ml-2 h-5 w-5" />
+                  <ArrowUpRight className="ml-2 h-4 w-4" />
                 </Button>
-                <div className="mt-3 flex items-center justify-center gap-1.5 text-[11px] font-mono uppercase tracking-[0.18em] text-white/40">
+                <div className="mt-2 flex items-center justify-center gap-1.5 text-[10.5px] font-mono uppercase tracking-[0.18em] text-white/40">
                   <span className="h-1.5 w-1.5 rounded-full bg-green-500 live-dot" />
                   Live · 1,247 formed this month
                 </div>
@@ -164,41 +164,41 @@ export default function MobileMenu({ open, onClose, country, onCTAClick }) {
               {/* Contact channels */}
               <motion.div
                 variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
-                transition={{ duration: 0.45 }}
-                className="mt-10"
+                transition={{ duration: 0.4 }}
+                className="mt-5"
               >
-                <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40 mb-3">
+                <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40 mb-2">
                   Talk to us
                 </div>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2.5">
                   <a
                     href={WHATSAPP_HREF}
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex flex-col items-start gap-2 p-4 rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-all"
+                    className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-all"
                     data-testid="mobile-menu-whatsapp"
                   >
-                    <span className="h-9 w-9 rounded-full grid place-items-center bg-[#25D366]">
-                      <MessageCircle className="h-4 w-4 text-white" />
+                    <span className="h-8 w-8 rounded-full grid place-items-center bg-[#25D366] shrink-0">
+                      <MessageCircle className="h-3.5 w-3.5 text-white" />
                     </span>
-                    <div>
-                      <div className="font-display font-semibold text-[14px] leading-none">WhatsApp</div>
-                      <div className="font-mono text-[10.5px] text-white/40 mt-1">{WHATSAPP_NUMBER}</div>
+                    <div className="min-w-0">
+                      <div className="font-display font-semibold text-[13px] leading-none">WhatsApp</div>
+                      <div className="font-mono text-[10px] text-white/40 mt-1 truncate">{WHATSAPP_NUMBER}</div>
                     </div>
                   </a>
                   <a
                     href={TELEGRAM_URL}
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex flex-col items-start gap-2 p-4 rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-all"
+                    className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-all"
                     data-testid="mobile-menu-telegram"
                   >
-                    <span className="h-9 w-9 rounded-full grid place-items-center bg-[#229ED9]">
-                      <Send className="h-4 w-4 text-white -ml-0.5" />
+                    <span className="h-8 w-8 rounded-full grid place-items-center bg-[#229ED9] shrink-0">
+                      <Send className="h-3.5 w-3.5 text-white -ml-0.5" />
                     </span>
-                    <div>
-                      <div className="font-display font-semibold text-[14px] leading-none">Telegram</div>
-                      <div className="font-mono text-[10.5px] text-white/40 mt-1 truncate">@B2BHub_inbox_bot</div>
+                    <div className="min-w-0">
+                      <div className="font-display font-semibold text-[13px] leading-none">Telegram</div>
+                      <div className="font-mono text-[10px] text-white/40 mt-1 truncate">@B2BHub_inbox_bot</div>
                     </div>
                   </a>
                 </div>
@@ -207,8 +207,8 @@ export default function MobileMenu({ open, onClose, country, onCTAClick }) {
               {/* Trust */}
               <motion.div
                 variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
-                transition={{ duration: 0.45 }}
-                className="mt-10 mb-2 pt-6 border-t border-white/10 flex items-center justify-between text-[11px]"
+                transition={{ duration: 0.4 }}
+                className="mt-5 pt-4 border-t border-white/10 flex items-center justify-between text-[11px]"
               >
                 <div className="flex items-center gap-1.5 text-white/55">
                   <div className="flex">
