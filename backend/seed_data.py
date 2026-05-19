@@ -276,6 +276,24 @@ def default_content_for(country: Dict[str, Any]) -> Dict[str, Any]:
             "title": f"{brand} — Register a {name} {company_type} in 24 hours",
             "description": f"Form your {name} {company_type} in 24 hours from {currency}{price_from} + {country['authority_name']} fee. {country['authority_short']} authorised, 15,000+ companies formed.",
         },
+        "tracking": {
+            "ga4_id": "",
+            "gtm_id": "",
+            "google_site_verification": "",
+            "bing_site_verification": "",
+            "facebook_pixel_id": "",
+            "facebook_domain_verification": "",
+            "linkedin_partner_id": "",
+            "twitter_pixel_id": "",
+            "tiktok_pixel_id": "",
+            "pinterest_tag_id": "",
+            "pinterest_verification": "",
+            "hotjar_id": "",
+            "clarity_id": "",
+            "plausible_domain": "",
+            "custom_head_html": "",
+            "custom_body_html": "",
+        },
     }
 
 

@@ -207,6 +207,7 @@ export default function AdminCountryEdit() {
               <TabsTrigger value="general" data-testid="tab-general" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">General</TabsTrigger>
               <TabsTrigger value="content" data-testid="tab-content" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Content</TabsTrigger>
               <TabsTrigger value="seo" data-testid="tab-seo" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">SEO</TabsTrigger>
+              <TabsTrigger value="tracking" data-testid="tab-tracking" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Tracking</TabsTrigger>
               <TabsTrigger value="b2bhub" data-testid="tab-b2bhub" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">B2BHub</TabsTrigger>
               <TabsTrigger value="danger" data-testid="tab-danger" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Danger</TabsTrigger>
             </TabsList>
@@ -296,6 +297,161 @@ export default function AdminCountryEdit() {
                   hint="< 160 chars"
                 />
               </Section>
+            </TabsContent>
+
+            {/* TRACKING */}
+            <TabsContent value="tracking" className="space-y-5">
+              <Section title="Verification" eyebrow="Search consoles">
+                <p className="text-[12.5px] text-zinc-500 -mt-1 mb-1">
+                  Paste only the <span className="font-mono text-zinc-400">content</span> value
+                  from each platform's verification meta tag. We'll inject the full{" "}
+                  <code className="font-mono text-zinc-400">&lt;meta&gt;</code> tag for you.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Field
+                    label="Google Search Console"
+                    hint="google-site-verification"
+                    value={content?.tracking?.google_site_verification}
+                    onChange={(v) => updateContent("tracking", { google_site_verification: v })}
+                    testid="tt-google-verify"
+                  />
+                  <Field
+                    label="Bing Webmaster"
+                    hint="msvalidate.01"
+                    value={content?.tracking?.bing_site_verification}
+                    onChange={(v) => updateContent("tracking", { bing_site_verification: v })}
+                    testid="tt-bing-verify"
+                  />
+                  <Field
+                    label="Facebook domain verification"
+                    hint="facebook-domain-verification"
+                    value={content?.tracking?.facebook_domain_verification}
+                    onChange={(v) => updateContent("tracking", { facebook_domain_verification: v })}
+                    testid="tt-fb-domain"
+                  />
+                  <Field
+                    label="Pinterest verification"
+                    hint="p:domain_verify"
+                    value={content?.tracking?.pinterest_verification}
+                    onChange={(v) => updateContent("tracking", { pinterest_verification: v })}
+                    testid="tt-pin-verify"
+                  />
+                </div>
+              </Section>
+
+              <Section title="Analytics & tag managers" eyebrow="Measurement">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Field
+                    label="Google Analytics 4"
+                    hint="G-XXXXXXXX"
+                    value={content?.tracking?.ga4_id}
+                    onChange={(v) => updateContent("tracking", { ga4_id: v })}
+                    testid="tt-ga4"
+                  />
+                  <Field
+                    label="Google Tag Manager"
+                    hint="GTM-XXXXXX"
+                    value={content?.tracking?.gtm_id}
+                    onChange={(v) => updateContent("tracking", { gtm_id: v })}
+                    testid="tt-gtm"
+                  />
+                  <Field
+                    label="Microsoft Clarity"
+                    hint="project id"
+                    value={content?.tracking?.clarity_id}
+                    onChange={(v) => updateContent("tracking", { clarity_id: v })}
+                    testid="tt-clarity"
+                  />
+                  <Field
+                    label="Hotjar"
+                    hint="numeric site id"
+                    value={content?.tracking?.hotjar_id}
+                    onChange={(v) => updateContent("tracking", { hotjar_id: v })}
+                    testid="tt-hotjar"
+                  />
+                  <Field
+                    label="Plausible domain"
+                    hint="data-domain"
+                    value={content?.tracking?.plausible_domain}
+                    onChange={(v) => updateContent("tracking", { plausible_domain: v })}
+                    testid="tt-plausible"
+                  />
+                </div>
+              </Section>
+
+              <Section title="Ad pixels" eyebrow="Conversion">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Field
+                    label="Meta (Facebook) Pixel"
+                    hint="numeric id"
+                    value={content?.tracking?.facebook_pixel_id}
+                    onChange={(v) => updateContent("tracking", { facebook_pixel_id: v })}
+                    testid="tt-fb-pixel"
+                  />
+                  <Field
+                    label="LinkedIn Insight Tag"
+                    hint="partner id"
+                    value={content?.tracking?.linkedin_partner_id}
+                    onChange={(v) => updateContent("tracking", { linkedin_partner_id: v })}
+                    testid="tt-li-tag"
+                  />
+                  <Field
+                    label="X (Twitter) Pixel"
+                    hint="pixel id"
+                    value={content?.tracking?.twitter_pixel_id}
+                    onChange={(v) => updateContent("tracking", { twitter_pixel_id: v })}
+                    testid="tt-twq"
+                  />
+                  <Field
+                    label="TikTok Pixel"
+                    hint="sdk id"
+                    value={content?.tracking?.tiktok_pixel_id}
+                    onChange={(v) => updateContent("tracking", { tiktok_pixel_id: v })}
+                    testid="tt-ttq"
+                  />
+                  <Field
+                    label="Pinterest Tag"
+                    hint="tag id"
+                    value={content?.tracking?.pinterest_tag_id}
+                    onChange={(v) => updateContent("tracking", { pinterest_tag_id: v })}
+                    testid="tt-pintrk"
+                  />
+                </div>
+              </Section>
+
+              <Section title="Custom HTML" eyebrow="Advanced">
+                <p className="text-[12.5px] text-zinc-500 -mt-1">
+                  Anything else? Paste raw HTML (including{" "}
+                  <code className="font-mono text-zinc-400">&lt;script&gt;</code> tags) to inject
+                  into the page. Scripts will execute live on every page load.
+                </p>
+                <Field
+                  label="Inject into <head>"
+                  hint="raw HTML"
+                  value={content?.tracking?.custom_head_html}
+                  onChange={(v) => updateContent("tracking", { custom_head_html: v })}
+                  multiline
+                  testid="tt-custom-head"
+                />
+                <Field
+                  label="Inject before </body>"
+                  hint="raw HTML"
+                  value={content?.tracking?.custom_body_html}
+                  onChange={(v) => updateContent("tracking", { custom_body_html: v })}
+                  multiline
+                  testid="tt-custom-body"
+                />
+              </Section>
+
+              <div className="rounded-xl border border-zinc-800 bg-zinc-950/60 p-4 text-[12px] text-zinc-400 leading-relaxed">
+                <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500 mb-2">
+                  Live preview tip
+                </div>
+                Tags are loaded only on the public landing page (not in /admin). Save your changes,
+                then open <code className="font-mono text-zinc-300">/preview/{country.slug}</code>{" "}
+                in a new tab to verify the platform-specific debugger (e.g. GA4 DebugView, Meta
+                Pixel Helper, GTM Preview) sees the events.
+              </div>
             </TabsContent>
 
             {/* B2BHUB */}

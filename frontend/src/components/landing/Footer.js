@@ -1,5 +1,12 @@
 import React from "react";
-import { Twitter, Linkedin, Github, Heart } from "lucide-react";
+import { Linkedin, Heart } from "lucide-react";
+
+// X (Twitter) icon — official rebrand. Lucide doesn't ship it yet, so inline SVG.
+const XIcon = (props) => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" {...props}>
+    <path d="M18.244 2H21.5l-7.5 8.57L23 22h-6.91l-4.91-6.39L5.4 22H2.144l8.01-9.15L1.5 2h7.09l4.43 5.86L18.244 2Zm-1.21 18h1.91L7.06 4H5.04l11.994 16Z" />
+  </svg>
+);
 
 export default function Footer({ country, data }) {
   if (!data) return null;
@@ -31,14 +38,13 @@ export default function Footer({ country, data }) {
 
             <div className="mt-8 flex items-center gap-3">
               {[
-                { Icon: Twitter, key: "twitter" },
-                { Icon: Linkedin, key: "linkedin" },
-                { Icon: Github, key: "github" },
-              ].map(({ Icon, key }) => (
+                { Icon: XIcon, key: "x", label: "X (Twitter)" },
+                { Icon: Linkedin, key: "linkedin", label: "LinkedIn" },
+              ].map(({ Icon, key, label }) => (
                 <a
                   key={key}
                   href={`#${key}`}
-                  aria-label={key}
+                  aria-label={label}
                   className="h-9 w-9 rounded-full border border-white/15 grid place-items-center hover:border-white transition-colors"
                   data-testid={`social-${key}`}
                 >

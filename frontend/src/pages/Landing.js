@@ -13,6 +13,7 @@ import FAQ from "../components/landing/FAQ";
 import FinalCTA from "../components/landing/FinalCTA";
 import Footer from "../components/landing/Footer";
 import LiveChat from "../components/landing/LiveChat";
+import TrackingTags from "../components/landing/TrackingTags";
 
 const B2BHUB_URL = "https://b2bhub.ltd";
 
@@ -83,6 +84,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-[#0A0A0A] font-body" data-testid="landing-page">
+      <TrackingTags tracking={content.tracking} scope={country.slug} />
       <Header country={country} onCTAClick={openLead} />
       <main>
         <Hero country={country} hero={content.hero} b2bhub={b2bhub} onCTAClick={openLead} />
