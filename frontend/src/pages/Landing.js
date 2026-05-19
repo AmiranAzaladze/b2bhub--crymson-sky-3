@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/client";
-import { initAnalytics, trackLeadOpen, trackLeadSubmit, trackNameCheck } from "../lib/analytics";
+import { trackLeadOpen } from "../lib/analytics";
 import Header from "../components/landing/Header";
 import Hero from "../components/landing/Hero";
 import TrustBar from "../components/landing/TrustBar";
@@ -12,13 +12,14 @@ import Testimonials from "../components/landing/Testimonials";
 import FAQ from "../components/landing/FAQ";
 import FinalCTA from "../components/landing/FinalCTA";
 import Footer from "../components/landing/Footer";
-import LeadDialog from "../components/landing/LeadDialog";
+import LiveChat from "../components/landing/LiveChat";
+
+const B2BHUB_URL = "https://b2bhub.ltd";
 
 export default function Landing() {
   const { slug } = useParams();
   const [data, setData] = React.useState(null);
   const [error, setError] = React.useState(null);
-  const [leadOpen, setLeadOpen] = React.useState(false);
 
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -76,8 +77,8 @@ export default function Landing() {
 
   const { country, content, b2bhub } = data;
   const openLead = () => {
-    trackLeadOpen("manual");
-    setLeadOpen(true);
+    trackLeadOpen("redirect-b2bhub");
+    window.open(B2BHUB_URL, "_blank", "noopener,noreferrer");
   };
 
   return (
@@ -94,7 +95,7 @@ export default function Landing() {
         <FinalCTA data={content.final_cta} onCTAClick={openLead} />
       </main>
       <Footer country={country} data={content.footer} />
-      <LeadDialog open={leadOpen} onOpenChange={setLeadOpen} country={country} />
+      <LiveChat />
     </div>
   );
 }

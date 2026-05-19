@@ -75,25 +75,11 @@ export default function Hero({ country, hero, b2bhub, onCTAClick }) {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-start">
           <div className="lg:col-span-7">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white/70 backdrop-blur px-3 py-1 text-[12px] font-medium text-neutral-700"
-              data-testid="hero-badge"
-            >
-              <span className="relative flex h-1.5 w-1.5">
-                <span className="absolute inline-flex h-full w-full rounded-full bg-green-500 live-dot" />
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-600" />
-              </span>
-              {hero.badge}
-            </motion.div>
-
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, delay: 0.05 }}
-              className="font-display mt-6 text-[40px] leading-[1.02] sm:text-[52px] md:text-[60px] lg:text-[68px] font-bold tracking-[-0.04em] text-neutral-950"
+              className="font-display mt-2 text-[40px] leading-[1.02] sm:text-[52px] md:text-[60px] lg:text-[68px] font-bold tracking-[-0.04em] text-neutral-950"
               data-testid="hero-headline"
             >
               {hero.headline_prefix}{" "}

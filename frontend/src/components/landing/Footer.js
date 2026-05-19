@@ -1,6 +1,5 @@
 import React from "react";
-import { Twitter, Linkedin, Github, ShieldCheck } from "lucide-react";
-import Logo from "../../lib/Logo";
+import { Twitter, Linkedin, Github, Heart } from "lucide-react";
 
 export default function Footer({ country, data }) {
   if (!data) return null;
@@ -29,11 +28,6 @@ export default function Footer({ country, data }) {
               </div>
             </div>
             <p className="text-[14px] text-white/60 leading-relaxed max-w-sm">{data.tagline}</p>
-
-            <div className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1 text-[11px] font-mono uppercase tracking-[0.18em] text-white/70">
-              <ShieldCheck className="h-3 w-3 text-green-400" />
-              {data.badge_text}
-            </div>
 
             <div className="mt-8 flex items-center gap-3">
               {[
@@ -87,13 +81,30 @@ export default function Footer({ country, data }) {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mt-8 gap-4">
-          <div className="font-mono text-[11px] text-white/40 tracking-wider">
-            {(data.legal || "").replace("{year}", year)}
-          </div>
-          <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-white/40">
-            {data.made_in}
-          </div>
+        <div
+          className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1 mt-8 text-[12px] sm:text-[13px] text-white/55 text-center"
+          data-testid="footer-copyright"
+        >
+          <span>© {year} All rights reserved, B2B Hub Ltd.</span>
+          <span className="text-white/30">·</span>
+          <span className="inline-flex items-center gap-1.5">
+            Made with
+            <Heart
+              className="h-3.5 w-3.5 fill-[#ff3b5c] text-[#ff3b5c] heartbeat"
+              aria-label="love"
+              data-testid="footer-heart"
+            />
+            by
+            <a
+              href="https://b2bhub.ltd"
+              target="_blank"
+              rel="noreferrer"
+              className="text-white hover:underline underline-offset-2 font-medium"
+              data-testid="footer-b2bhub-link"
+            >
+              b2bhub.ltd
+            </a>
+          </span>
         </div>
       </div>
     </footer>
