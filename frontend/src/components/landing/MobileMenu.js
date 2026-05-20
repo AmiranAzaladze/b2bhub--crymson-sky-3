@@ -175,31 +175,25 @@ export default function MobileMenu({ open, onClose, country, onCTAClick }) {
                     href={WHATSAPP_HREF}
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-all"
+                    className="group flex items-center gap-2.5 px-3 py-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-all"
                     data-testid="mobile-menu-whatsapp"
                   >
                     <span className="h-8 w-8 rounded-full grid place-items-center bg-[#25D366] shrink-0">
                       <MessageCircle className="h-3.5 w-3.5 text-white" />
                     </span>
-                    <div className="min-w-0">
-                      <div className="font-display font-semibold text-[13px] leading-none">WhatsApp</div>
-                      <div className="font-mono text-[10px] text-white/40 mt-1 truncate">{WHATSAPP_NUMBER}</div>
-                    </div>
+                    <span className="font-display font-semibold text-[14px] leading-none">WhatsApp</span>
                   </a>
                   <a
                     href={TELEGRAM_URL}
                     target="_blank"
                     rel="noreferrer"
-                    className="group flex items-center gap-2.5 px-3 py-2.5 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-all"
+                    className="group flex items-center gap-2.5 px-3 py-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-all"
                     data-testid="mobile-menu-telegram"
                   >
                     <span className="h-8 w-8 rounded-full grid place-items-center bg-[#229ED9] shrink-0">
                       <Send className="h-3.5 w-3.5 text-white -ml-0.5" />
                     </span>
-                    <div className="min-w-0">
-                      <div className="font-display font-semibold text-[13px] leading-none">Telegram</div>
-                      <div className="font-mono text-[10px] text-white/40 mt-1 truncate">@B2BHub_inbox_bot</div>
-                    </div>
+                    <span className="font-display font-semibold text-[14px] leading-none">Telegram</span>
                   </a>
                 </div>
               </motion.div>
