@@ -60,7 +60,7 @@ def default_content_for(country: Dict[str, Any]) -> Dict[str, Any]:
                 {"label": "Certificate of Incorporation", "t": "ETA 6h", "done": False},
             ],
             "trust_chips": [
-                {"icon": "Star", "text": "4.9/5 · Trustpilot (20,000+)"},
+                {"icon": "Star", "text": "4.9/5 · 20,000+ founders"},
                 {"icon": "Shield", "text": f"{country['authority_short']} authorised"},
                 {"icon": "Users", "text": "1,247 companies formed this month"},
             ],
@@ -204,7 +204,7 @@ def default_content_for(country: Dict[str, Any]) -> Dict[str, Any]:
             "title": "Loved by 15,000+",
             "title_secondary": "founders.",
             "rating": "4.9 / 5",
-            "rating_sub": "20,142 Trustpilot reviews",
+            "rating_sub": "20,142 verified reviews",
             "items": [
                 {
                     "quote": "Filed and incorporated in under an hour. The privacy package alone is worth it — my home address is finally off the public record.",

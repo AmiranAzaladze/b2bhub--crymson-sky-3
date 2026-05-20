@@ -218,7 +218,7 @@ export default function MobileMenu({ open, onClose, country, onCTAClick }) {
                       </svg>
                     ))}
                   </div>
-                  <span className="font-mono">4.9/5 · Trustpilot</span>
+                  <span className="font-mono">4.9/5 · 20,000+ founders</span>
                 </div>
                 <span className="font-mono text-white/30 uppercase tracking-[0.18em] text-[10px]">
                   © {new Date().getFullYear()} B2B Hub
