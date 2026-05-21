@@ -108,7 +108,7 @@ async function ensureSite(slug, country, existing) {
   let site = existing.get(name);
   if (!site) {
     console.log(`→ creating site ${name}`);
-    site = await netlify("POST", "/sites", {
+    const body = {
       name,
       repo: {
         provider: "github",
@@ -118,7 +118,16 @@ async function ensureSite(slug, country, existing) {
         dir: "frontend/build",
         base: "frontend",
       },
-    });
+    };
+    if (process.env.NETLIFY_ACCOUNT_SLUG) {
+      site = await netlify(
+        "POST",
+        `/${process.env.NETLIFY_ACCOUNT_SLUG}/sites`,
+        body,
+      );
+    } else {
+      site = await netlify("POST", "/sites", body);
+    }
   } else {
     console.log(`✓ site exists ${name} (${site.url})`);
   }
