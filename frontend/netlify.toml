@@ -1,0 +1,25 @@
+[build]
+  base    = "frontend"
+  command = "yarn install --frozen-lockfile && yarn build"
+  publish = "frontend/build"
+
+[build.environment]
+  CI = "false"
+  NODE_VERSION = "20"
+
+# SPA fallback — every path returns index.html so React Router can handle it
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
+
+# Long-cache static assets, never-cache index.html
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

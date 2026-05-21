@@ -24,7 +24,13 @@ export default function Landing() {
 
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const tenantParam = slug || params.get("tenant");
+    // Resolution priority:
+    // 1. Build-time bake (REACT_APP_TENANT)   → for per-site Netlify deploys
+    // 2. URL slug                             → /preview/:slug
+    // 3. ?tenant= query param                 → manual override
+    // 4. Hostname                             → multi-domain single-deploy mode
+    const bakedTenant = process.env.REACT_APP_TENANT;
+    const tenantParam = bakedTenant || slug || params.get("tenant");
     const host = window.location.hostname;
     const query = tenantParam ? `tenant=${tenantParam}` : `host=${encodeURIComponent(host)}`;
     api
