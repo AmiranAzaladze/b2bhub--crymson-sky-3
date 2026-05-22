@@ -7,6 +7,21 @@
   CI = "false"
   NODE_VERSION = "20"
 
+# Proxy /sitemap.xml and /robots.txt to the backend so each custom domain
+# gets its own dynamic sitemap (resolved server-side from the Host header).
+# IMPORTANT: these MUST come before the SPA fallback below.
+[[redirects]]
+  from   = "/sitemap.xml"
+  to     = "https://b2bhub-crymson-sky-3-production.up.railway.app/api/public/sitemap.xml"
+  status = 200
+  force  = true
+
+[[redirects]]
+  from   = "/robots.txt"
+  to     = "https://b2bhub-crymson-sky-3-production.up.railway.app/api/public/robots.txt"
+  status = 200
+  force  = true
+
 # SPA fallback — every path returns index.html so React Router can handle it
 [[redirects]]
   from   = "/*"

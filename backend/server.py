@@ -18,7 +18,7 @@ from typing import Any, Dict, List, Optional
 
 import bcrypt
 import jwt
-from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, status
+from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel, EmailStr, Field
@@ -350,6 +350,85 @@ async def public_landing(host: Optional[str] = None, tenant: Optional[str] = Non
 
     b2bhub = await fetch_b2bhub_data(country.get("b2bhub_country_code") or country.get("country_code", ""))
     return {"country": country, "content": content_doc["content"], "b2bhub": b2bhub}
+
+
+async def _country_from_host_header(request: Request) -> Optional[Dict[str, Any]]:
+    """Resolve a country from request's Host or X-Forwarded-Host header."""
+    host_header = (
+        request.headers.get("x-forwarded-host")
+        or request.headers.get("host")
+        or request.query_params.get("host")
+        or ""
+    )
+    host = _resolve_tenant(host_header, None)
+    if not host:
+        return None
+    return await db.countries.find_one({"domain": host, "status": "published"}, {"_id": 0})
+
+
+@api.get("/public/sitemap.xml", response_class=Response)
+async def public_sitemap(request: Request, host: Optional[str] = None):
+    """Per-domain sitemap.xml. Returns only that country's URLs."""
+    country = await _country_from_host_header(request)
+    # Fallback to first published country if host doesn't resolve
+    if country is None:
+        country = await db.countries.find_one(
+            {"status": "published"}, {"_id": 0}, sort=[("created_at", 1)]
+        )
+    if country is None:
+        raise HTTPException(status_code=404, detail="No countries configured")
+
+    domain = country.get("domain") or "example.com"
+    base_url = f"https://{domain}"
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    urls = [
+        ("", "1.0", "weekly"),
+        ("#pricing", "0.9", "weekly"),
+        ("#how-it-works", "0.8", "monthly"),
+        ("#benefits", "0.7", "monthly"),
+        ("#testimonials", "0.7", "monthly"),
+        ("#faq", "0.6", "monthly"),
+    ]
+    body_lines = [
+        '<?xml version="1.0" encoding="UTF-8"?>',
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
+    ]
+    for path, priority, freq in urls:
+        # Sitemap protocol doesn't allow fragments in <loc>; only include root.
+        if "#" in path:
+            continue
+        body_lines.append("  <url>")
+        body_lines.append(f"    <loc>{base_url}{path}</loc>")
+        body_lines.append(f"    <lastmod>{today}</lastmod>")
+        body_lines.append(f"    <changefreq>{freq}</changefreq>")
+        body_lines.append(f"    <priority>{priority}</priority>")
+        body_lines.append("  </url>")
+    body_lines.append("</urlset>")
+    return Response(
+        content="\n".join(body_lines),
+        media_type="application/xml",
+        headers={"Cache-Control": "public, max-age=3600"},
+    )
+
+
+@api.get("/public/robots.txt", response_class=Response)
+async def public_robots(request: Request, host: Optional[str] = None):
+    """Per-domain robots.txt pointing at that domain's sitemap."""
+    country = await _country_from_host_header(request)
+    if country is None:
+        country = await db.countries.find_one(
+            {"status": "published"}, {"_id": 0}, sort=[("created_at", 1)]
+        )
+    domain = (country or {}).get("domain") or "example.com"
+    body = (
+        "User-agent: *\n"
+        "Allow: /\n"
+        "Disallow: /admin\n"
+        "Disallow: /api\n"
+        "\n"
+        f"Sitemap: https://{domain}/sitemap.xml\n"
+    )
+    return Response(content=body, media_type="text/plain", headers={"Cache-Control": "public, max-age=3600"})
 
 
 def _country_to_seed_format(c: Dict[str, Any]) -> Dict[str, Any]:
