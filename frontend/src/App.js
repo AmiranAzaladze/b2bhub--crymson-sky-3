@@ -9,6 +9,26 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { Toaster } from "./components/ui/sonner";
 
+// Hostnames that should NOT serve a tenant landing — they go straight to /admin.
+// Add new internal/staff hosts here (no protocol, no path).
+const ADMIN_HOSTS = new Set(
+  (process.env.REACT_APP_ADMIN_HOSTS ||
+    "localhost,127.0.0.1,crymsonsky3.netlify.app,crymsonsky3.menelausholding.com"
+  )
+    .split(",")
+    .map((h) => h.trim().toLowerCase())
+    .filter(Boolean)
+);
+
+function isAdminHost() {
+  if (typeof window === "undefined") return false;
+  return ADMIN_HOSTS.has(window.location.hostname.toLowerCase());
+}
+
+function RootRoute() {
+  return isAdminHost() ? <Navigate to="/admin/login" replace /> : <Landing />;
+}
+
 function Protected({ children }) {
   const { user, ready } = useAuth();
   if (!ready) {
@@ -31,7 +51,8 @@ function App() {
         <BrowserRouter>
           <Routes>
             {/* Public landing — tenant resolved from hostname or ?tenant= */}
-            <Route path="/" element={<Landing />} />
+            {/* On admin/internal hosts, root redirects to /admin/login. */}
+            <Route path="/" element={<RootRoute />} />
             <Route path="/preview/:slug" element={<Landing />} />
 
             {/* Admin */}
