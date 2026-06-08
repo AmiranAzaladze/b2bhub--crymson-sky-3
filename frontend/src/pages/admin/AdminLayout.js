@@ -2,7 +2,7 @@ import React from "react";
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
 import api from "../../api/client";
-import { LogOut, Plus, Globe, ChevronRight, Loader2, BarChart3, Menu, X } from "lucide-react";
+import { LogOut, Plus, Globe, ChevronRight, Loader2, BarChart3, Menu, X, Search } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import {
   Dialog,
@@ -29,6 +29,19 @@ export default function AdminLayout() {
   const [loading, setLoading] = React.useState(true);
   const [addOpen, setAddOpen] = React.useState(false);
   const [navOpen, setNavOpen] = React.useState(false);
+  const [search, setSearch] = React.useState("");
+
+  const filteredCountries = React.useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return countries;
+    return countries.filter((c) => {
+      const hay = [c.name, c.slug, c.domain, c.brand_name, c.country_code]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      return hay.includes(q);
+    });
+  }, [countries, search]);
 
   const refresh = React.useCallback(async () => {
     setLoading(true);
@@ -129,6 +142,33 @@ export default function AdminLayout() {
             </button>
           </div>
 
+          <div className="px-4 pt-4 pb-2 border-b border-zinc-800/60">
+            <div className="relative">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-zinc-500 pointer-events-none" />
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search country, slug, domain…"
+                className="w-full h-9 pl-8 pr-8 rounded-md bg-zinc-800/60 border border-zinc-700/60 text-[12.5px] text-zinc-100 placeholder:text-zinc-500 focus:outline-none focus:border-zinc-500 focus:bg-zinc-800 transition-colors"
+                data-testid="admin-country-search"
+                autoComplete="off"
+                spellCheck={false}
+              />
+              {search && (
+                <button
+                  type="button"
+                  onClick={() => setSearch("")}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 h-5 w-5 grid place-items-center rounded text-zinc-500 hover:text-zinc-200 hover:bg-zinc-700/60 transition-colors"
+                  data-testid="admin-country-search-clear"
+                  aria-label="Clear search"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              )}
+            </div>
+          </div>
+
           <div className="flex-1 overflow-y-auto px-3 py-4">
             <div className="flex items-center justify-between px-2 mb-3">
               <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-zinc-500">
@@ -162,8 +202,8 @@ export default function AdminLayout() {
                 >
                   <Globe className="h-3.5 w-3.5" />
                   All countries
-                  <span className="ml-auto font-mono text-[10px] text-zinc-500">
-                    {countries.length}
+                  <span className="ml-auto font-mono text-[10px] text-zinc-500" data-testid="admin-country-count">
+                    {search ? `${filteredCountries.length}/${countries.length}` : countries.length}
                   </span>
                 </NavLink>
 
@@ -183,7 +223,13 @@ export default function AdminLayout() {
 
                 <div className="h-3" />
 
-                {countries.map((c) => (
+                {filteredCountries.length === 0 && search && (
+                  <div className="px-3 py-4 text-center text-[12px] text-zinc-500" data-testid="admin-country-empty">
+                    No country matches “{search}”
+                  </div>
+                )}
+
+                {filteredCountries.map((c) => (
                   <NavLink
                     key={c.id}
                     to={`/admin/countries/${c.id}`}
