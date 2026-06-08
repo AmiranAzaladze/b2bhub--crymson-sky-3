@@ -39,21 +39,39 @@ export default function Landing() {
       .catch((e) => setError(e?.response?.data?.detail || "Failed to load"));
   }, [slug]);
 
-  // Update document title + meta description per-country (basic SEO)
+  // Dynamic per-domain SEO tags (title, description, canonical, OG/Twitter)
+  // Must be called before any early returns to respect Rules of Hooks.
   React.useEffect(() => {
     if (!data) return;
-    const t = data?.content?.seo?.title;
-    const d = data?.content?.seo?.description;
-    if (t) document.title = t;
-    if (d) {
-      let meta = document.querySelector('meta[name="description"]');
-      if (!meta) {
-        meta = document.createElement("meta");
-        meta.setAttribute("name", "description");
-        document.head.appendChild(meta);
-      }
-      meta.setAttribute("content", d);
-    }
+    const country = data.country || {};
+    const content = data.content || {};
+    const seo = content.seo || {};
+    const title = seo.title || `${country.brand_name || ""} — Register a ${country.name || ""} company in 24 hours`;
+    const description = seo.description || "";
+    const domain = country.domain || window.location.hostname;
+    const canonical = `https://${domain}/`;
+
+    document.title = title;
+
+    const setMeta = (key, val, attr = "name") => {
+      if (!val) return;
+      let el = document.head.querySelector(`meta[${attr}="${key}"]`);
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, key); document.head.appendChild(el); }
+      el.setAttribute("content", val);
+    };
+    setMeta("description", description);
+    setMeta("og:title", title, "property");
+    setMeta("og:description", description, "property");
+    setMeta("og:url", canonical, "property");
+    setMeta("og:type", "website", "property");
+    setMeta("og:site_name", country.brand_name || "", "property");
+    setMeta("twitter:card", "summary_large_image");
+    setMeta("twitter:title", title);
+    setMeta("twitter:description", description);
+
+    let link = document.head.querySelector('link[rel="canonical"]');
+    if (!link) { link = document.createElement("link"); link.setAttribute("rel", "canonical"); document.head.appendChild(link); }
+    link.setAttribute("href", canonical);
   }, [data]);
 
   if (error) {
@@ -83,38 +101,6 @@ export default function Landing() {
   }
 
   const { country, content, b2bhub } = data;
-
-  // Dynamic per-domain SEO tags (title, description, canonical, OG/Twitter)
-  React.useEffect(() => {
-    if (!country || !content) return;
-    const seo = content.seo || {};
-    const title = seo.title || `${country.brand_name} — Register a ${country.name} company in 24 hours`;
-    const description = seo.description || "";
-    const domain = country.domain || window.location.hostname;
-    const canonical = `https://${domain}/`;
-
-    document.title = title;
-
-    const setMeta = (key, val, attr = "name") => {
-      if (!val) return;
-      let el = document.head.querySelector(`meta[${attr}="${key}"]`);
-      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, key); document.head.appendChild(el); }
-      el.setAttribute("content", val);
-    };
-    setMeta("description", description);
-    setMeta("og:title", title, "property");
-    setMeta("og:description", description, "property");
-    setMeta("og:url", canonical, "property");
-    setMeta("og:type", "website", "property");
-    setMeta("og:site_name", country.brand_name, "property");
-    setMeta("twitter:card", "summary_large_image");
-    setMeta("twitter:title", title);
-    setMeta("twitter:description", description);
-
-    let link = document.head.querySelector('link[rel="canonical"]');
-    if (!link) { link = document.createElement("link"); link.setAttribute("rel", "canonical"); document.head.appendChild(link); }
-    link.setAttribute("href", canonical);
-  }, [country, content]);
 
   const openLead = () => {
     trackLeadOpen("redirect-b2bhub");
