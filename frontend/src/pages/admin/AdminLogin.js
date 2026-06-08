@@ -7,6 +7,7 @@ import { Label } from "../../components/ui/label";
 import { ArrowRight, Loader2, ShieldCheck } from "lucide-react";
 import { formatApiError } from "../../api/client";
 import useDarkRoot from "../../lib/useDarkRoot";
+import { BrandMark } from "../../lib/Logo";
 
 export default function AdminLogin() {
   useDarkRoot();
@@ -40,9 +41,7 @@ export default function AdminLogin() {
         <div className="absolute -top-32 -left-32 h-[420px] w-[420px] rounded-full blur-3xl opacity-20 bg-[#C8102E] pointer-events-none" />
         <div className="relative">
           <div className="flex items-center gap-2 mb-12">
-            <div className="h-8 w-8 rounded-md bg-white grid place-items-center">
-              <span className="text-zinc-950 font-display font-bold text-[14px]">SF</span>
-            </div>
+            <BrandMark brandName="Swift Formations" size="md" />
             <span className="font-display font-bold text-[18px] text-zinc-50">Swift Formations · Admin</span>
           </div>
           <h1 className="font-display text-5xl font-bold tracking-[-0.03em] leading-[1.04] max-w-md text-zinc-50">

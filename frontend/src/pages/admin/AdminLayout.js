@@ -14,7 +14,7 @@ import {
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { toast } from "sonner";
-import { autoAbbreviation } from "../../lib/Logo";
+import { autoAbbreviation, BrandMark } from "../../lib/Logo";
 import useDarkRoot from "../../lib/useDarkRoot";
 
 export const CountriesContext = React.createContext(null);
@@ -86,9 +86,7 @@ export default function AdminLayout() {
             <Menu className="h-5 w-5" />
           </button>
           <NavLink to="/admin" className="flex items-center gap-2 min-w-0">
-            <div className="h-6 w-6 rounded-md bg-white grid place-items-center shrink-0">
-              <span className="text-zinc-950 font-display font-bold text-[11px]">SF</span>
-            </div>
+            <BrandMark brandName="Swift Formations" size="xs" />
             <span className="font-display font-bold text-[14px] tracking-tight text-zinc-50 truncate">
               Swift Formations
             </span>
@@ -120,9 +118,7 @@ export default function AdminLayout() {
         >
           <div className="px-5 py-5 border-b border-zinc-800 flex items-center justify-between gap-2">
             <NavLink to="/admin" className="flex items-center gap-2 min-w-0" data-testid="admin-brand">
-              <div className="h-7 w-7 rounded-md bg-white grid place-items-center shrink-0">
-                <span className="text-zinc-950 font-display font-bold text-[13px]">SF</span>
-              </div>
+              <BrandMark brandName="Swift Formations" size="sm" />
               <div className="min-w-0">
                 <div className="font-display font-bold text-[15px] leading-none tracking-tight text-zinc-50 truncate">
                   Swift Formations

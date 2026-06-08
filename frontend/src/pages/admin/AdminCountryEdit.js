@@ -17,7 +17,7 @@ import {
 import { CountriesContext } from "./AdminLayout";
 import { Field, Section, ListEditor, StringListEditor } from "../../components/admin/Fields";
 import { Label } from "../../components/ui/label";
-import { autoAbbreviation } from "../../lib/Logo";
+import { autoAbbreviation, BrandMark } from "../../lib/Logo";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "../../components/ui/dialog";
@@ -241,14 +241,12 @@ export default function AdminCountryEdit() {
                   <div>
                     <Label className="text-[12px] font-medium text-zinc-300 block mb-1.5">Logo preview</Label>
                     <div className="flex items-center gap-3 border border-zinc-800 bg-zinc-950/60 rounded-lg px-4 py-3">
-                      <div
-                        className="h-9 w-9 rounded-md grid place-items-center"
-                        style={{ backgroundColor: country.brand_color }}
-                      >
-                        <span className="text-white font-display font-bold text-[15px] leading-none">
-                          {country.abbreviation || autoAbbreviation(country.brand_name)}
-                        </span>
-                      </div>
+                      <BrandMark
+                        brandName={country.brand_name}
+                        abbreviation={country.abbreviation}
+                        color={country.brand_color}
+                        size="md"
+                      />
                       <span className="font-display font-bold text-[16px] tracking-tight text-zinc-50">
                         {country.brand_name}
                       </span>

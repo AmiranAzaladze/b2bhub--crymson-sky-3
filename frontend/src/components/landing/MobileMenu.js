@@ -2,6 +2,7 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, ArrowUpRight, MessageCircle, Send } from "lucide-react";
 import { Button } from "../ui/button";
+import { BrandMark } from "../../lib/Logo";
 
 const navItems = [
   { label: "How it works", href: "#how-it-works" },
@@ -73,17 +74,12 @@ export default function MobileMenu({ open, onClose, country, onCTAClick }) {
               onClick={(e) => { e.preventDefault(); handleNavClick("#top"); }}
               className="flex items-center gap-2"
             >
-              <div
-                className="h-7 w-7 rounded-md grid place-items-center shrink-0"
-                style={{ backgroundColor: "#FFFFFF" }}
-              >
-                <span
-                  className="font-display font-bold leading-none text-[13px]"
-                  style={{ color: brand }}
-                >
-                  {country?.abbreviation || "SF"}
-                </span>
-              </div>
+              <BrandMark
+                brandName={country?.brand_name}
+                abbreviation={country?.abbreviation}
+                color={brand}
+                size="sm"
+              />
               <span className="font-display font-bold tracking-tight text-[17px] text-white">
                 {country?.brand_name}
               </span>
