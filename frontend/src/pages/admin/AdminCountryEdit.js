@@ -21,6 +21,7 @@ import { autoAbbreviation, BrandMark } from "../../lib/Logo";
 import { contentScore, seoScore } from "../../lib/seoQuality";
 import { QualityBar } from "../../components/admin/QualityBar";
 import SeoTestsPanel from "../../components/admin/SeoTestsPanel";
+import SerpPreview from "../../components/admin/SerpPreview";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "../../components/ui/dialog";
@@ -129,6 +130,14 @@ export default function AdminCountryEdit() {
     }
   };
 
+  const [activeTab, setActiveTab] = React.useState("general");
+  const handleFix = React.useCallback((fix) => {
+    if (fix?.tab) {
+      setActiveTab(fix.tab);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, []);
+
   if (loading || !country) {
     return (
       <div className="p-8 lg:p-12 grid place-items-center min-h-[60vh]">
@@ -214,7 +223,7 @@ export default function AdminCountryEdit() {
       {/* Body */}
       <div className="flex-1">
         <div className="max-w-4xl mx-auto px-4 sm:px-8 lg:px-12 py-6 sm:py-8">
-          <Tabs defaultValue="general" className="w-full">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="bg-zinc-900 border border-zinc-800 mb-6 w-full sm:w-auto overflow-x-auto flex justify-start no-scrollbar">
               <TabsTrigger value="general" data-testid="tab-general" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">General</TabsTrigger>
               <TabsTrigger value="content" data-testid="tab-content" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Content</TabsTrigger>
@@ -308,11 +317,14 @@ export default function AdminCountryEdit() {
                   hint="< 160 chars"
                 />
               </Section>
+              <Section title="Google preview">
+                <SerpPreview country={country} content={content || {}} />
+              </Section>
             </TabsContent>
 
             {/* SEO TESTS */}
             <TabsContent value="seo-tests" className="space-y-5">
-              <SeoTestsPanel country={country} content={content || {}} />
+              <SeoTestsPanel country={country} content={content || {}} onFix={handleFix} />
             </TabsContent>
 
             {/* TRACKING */}

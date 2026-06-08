@@ -14,6 +14,7 @@ import {
   Database, Trash2, RefreshCw, ChevronUp, ChevronDown, Globe2, Monitor, Smartphone, Tablet,
 } from "lucide-react";
 import { toast } from "sonner";
+import SeoLeaderboard from "../../components/admin/SeoLeaderboard";
 
 const PERIODS = [
   { v: "1h", l: "Last hour" },
@@ -277,6 +278,9 @@ export default function AdminAnalytics() {
             data={breakdowns.button} formatter={(k) => k}
           />
         </div>
+
+        {/* SEO Leaderboard across all countries */}
+        <SeoLeaderboard countries={countries} />
 
         {/* Live feed */}
         <Card>
