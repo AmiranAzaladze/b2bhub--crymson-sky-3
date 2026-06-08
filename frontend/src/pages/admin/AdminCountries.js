@@ -11,6 +11,7 @@ import {
   Loader2, AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { BrandMark } from "../../lib/Logo";
 
 export default function AdminCountries() {
   const { countries, refresh } = React.useContext(CountriesContext);
@@ -103,14 +104,7 @@ export default function AdminCountries() {
               data-testid={`country-row-${c.slug}`}
             >
               <div className="sm:col-span-4 flex items-center gap-3 min-w-0 flex-1 sm:flex-none">
-                <div
-                  className="h-9 w-9 rounded-md grid place-items-center shrink-0"
-                  style={{ backgroundColor: c.brand_color }}
-                >
-                  <span className="text-white font-display font-bold text-[13px] leading-none">
-                    {c.abbreviation}
-                  </span>
-                </div>
+                <BrandMark brandName={c.brand_name} size="md" />
                 <div className="min-w-0 flex-1">
                   <div className="font-display font-semibold text-[14px] sm:text-[15px] text-zinc-50 truncate flex items-center gap-2">
                     <span>{c.flag}</span>
