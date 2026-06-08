@@ -18,6 +18,9 @@ import { CountriesContext } from "./AdminLayout";
 import { Field, Section, ListEditor, StringListEditor } from "../../components/admin/Fields";
 import { Label } from "../../components/ui/label";
 import { autoAbbreviation, BrandMark } from "../../lib/Logo";
+import { contentScore, seoScore } from "../../lib/seoQuality";
+import { QualityBar } from "../../components/admin/QualityBar";
+import SeoTestsPanel from "../../components/admin/SeoTestsPanel";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "../../components/ui/dialog";
@@ -134,6 +137,9 @@ export default function AdminCountryEdit() {
     );
   }
 
+  const cScore = contentScore(content || {}).score;
+  const sScore = seoScore(country, content || {}).score;
+
   return (
     <div className="flex flex-col min-h-screen" data-testid="country-edit-page">
       {/* Top bar */}
@@ -192,6 +198,12 @@ export default function AdminCountryEdit() {
         </div>
       </div>
 
+      {/* Quality monitor */}
+      <div className="bg-zinc-950/40 border-b border-zinc-800 px-4 sm:px-8 lg:px-12 py-3 flex flex-col sm:flex-row gap-2">
+        <QualityBar label="Content quality" value={cScore} testid="quality-content" />
+        <QualityBar label="SEO quality" value={sScore} testid="quality-seo" />
+      </div>
+
       {dirty && (
         <div className="bg-amber-950/40 border-b border-amber-900/60 px-4 sm:px-8 lg:px-12 py-2 text-[12.5px] text-amber-300 flex items-center gap-2">
           <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
@@ -207,6 +219,7 @@ export default function AdminCountryEdit() {
               <TabsTrigger value="general" data-testid="tab-general" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">General</TabsTrigger>
               <TabsTrigger value="content" data-testid="tab-content" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Content</TabsTrigger>
               <TabsTrigger value="seo" data-testid="tab-seo" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">SEO</TabsTrigger>
+              <TabsTrigger value="seo-tests" data-testid="tab-seo-tests" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">SEO tests</TabsTrigger>
               <TabsTrigger value="tracking" data-testid="tab-tracking" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Tracking</TabsTrigger>
               <TabsTrigger value="b2bhub" data-testid="tab-b2bhub" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">B2BHub</TabsTrigger>
               <TabsTrigger value="danger" data-testid="tab-danger" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Danger</TabsTrigger>
@@ -295,6 +308,11 @@ export default function AdminCountryEdit() {
                   hint="< 160 chars"
                 />
               </Section>
+            </TabsContent>
+
+            {/* SEO TESTS */}
+            <TabsContent value="seo-tests" className="space-y-5">
+              <SeoTestsPanel country={country} content={content || {}} />
             </TabsContent>
 
             {/* TRACKING */}
