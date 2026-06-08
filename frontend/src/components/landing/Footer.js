@@ -1,5 +1,6 @@
 import React from "react";
-import { Linkedin, Heart } from "lucide-react";
+import { Linkedin, Heart, Instagram, Facebook } from "lucide-react";
+import { BrandMark } from "../../lib/Logo";
 
 // X (Twitter) icon — official rebrand. Lucide doesn't ship it yet, so inline SVG.
 const XIcon = (props) => (
@@ -18,17 +19,7 @@ export default function Footer({ country, data }) {
           <div className="md:col-span-4">
             <div className="mb-5">
               <div className="flex items-center gap-2">
-                <div
-                  className="h-7 w-7 rounded-md grid place-items-center"
-                  style={{ backgroundColor: "#FFFFFF" }}
-                >
-                  <span
-                    className="font-display font-bold text-[13px] leading-none"
-                    style={{ color: country.brand_color }}
-                  >
-                    {country.abbreviation}
-                  </span>
-                </div>
+                <BrandMark brandName={country.brand_name} size="sm" />
                 <span className="font-display font-bold text-[17px] tracking-tight text-white">
                   {country.brand_name}
                 </span>
@@ -38,19 +29,25 @@ export default function Footer({ country, data }) {
 
             <div className="mt-8 flex items-center gap-3">
               {[
-                { Icon: XIcon, key: "x", label: "X (Twitter)" },
-                { Icon: Linkedin, key: "linkedin", label: "LinkedIn" },
-              ].map(({ Icon, key, label }) => (
-                <a
-                  key={key}
-                  href={`#${key}`}
-                  aria-label={label}
-                  className="h-9 w-9 rounded-full border border-white/15 grid place-items-center hover:border-white transition-colors"
-                  data-testid={`social-${key}`}
-                >
-                  <Icon className="h-3.5 w-3.5" />
-                </a>
-              ))}
+                { Icon: XIcon, key: "x", label: "X (Twitter)", url: data?.social?.x },
+                { Icon: Instagram, key: "instagram", label: "Instagram", url: data?.social?.instagram },
+                { Icon: Facebook, key: "facebook", label: "Facebook", url: data?.social?.facebook },
+                { Icon: Linkedin, key: "linkedin", label: "LinkedIn", url: data?.social?.linkedin },
+              ]
+                .filter(({ url }) => url && url.trim())
+                .map(({ Icon, key, label, url }) => (
+                  <a
+                    key={key}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    className="h-9 w-9 rounded-full border border-white/15 grid place-items-center hover:border-white hover:bg-white/[0.04] transition-all"
+                    data-testid={`social-${key}`}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                  </a>
+                ))}
             </div>
           </div>
 

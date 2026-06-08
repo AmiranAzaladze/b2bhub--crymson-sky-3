@@ -802,6 +802,35 @@ function ContentEditor({ content, updateContent, updateContentRaw }) {
           <Field label="Badge text" value={c.footer?.badge_text} onChange={(v) => updateContent("footer", { badge_text: v })} />
           <Field label="Legal line" value={c.footer?.legal} onChange={(v) => updateContent("footer", { legal: v })} hint="{year} = current year" />
           <Field label="Made-in line" value={c.footer?.made_in} onChange={(v) => updateContent("footer", { made_in: v })} />
+
+          <Label className="text-[12px] font-medium text-zinc-300 block mt-4 mb-1.5">Social links</Label>
+          <div className="grid sm:grid-cols-2 gap-2.5 mb-2">
+            <Field
+              label="Instagram URL"
+              value={c.footer?.social?.instagram}
+              onChange={(v) => updateContent("footer", { social: { ...(c.footer?.social || {}), instagram: v } })}
+              hint="https://instagram.com/yourbrand"
+            />
+            <Field
+              label="X (Twitter) URL"
+              value={c.footer?.social?.x}
+              onChange={(v) => updateContent("footer", { social: { ...(c.footer?.social || {}), x: v } })}
+              hint="https://x.com/yourbrand"
+            />
+            <Field
+              label="Facebook URL"
+              value={c.footer?.social?.facebook}
+              onChange={(v) => updateContent("footer", { social: { ...(c.footer?.social || {}), facebook: v } })}
+              hint="https://facebook.com/yourbrand"
+            />
+            <Field
+              label="LinkedIn URL"
+              value={c.footer?.social?.linkedin}
+              onChange={(v) => updateContent("footer", { social: { ...(c.footer?.social || {}), linkedin: v } })}
+              hint="https://linkedin.com/company/yourbrand"
+            />
+          </div>
+
           <Label className="text-[12px] font-medium text-neutral-700 block mt-2">Columns</Label>
           <ListEditor
             items={c.footer?.columns || []}
