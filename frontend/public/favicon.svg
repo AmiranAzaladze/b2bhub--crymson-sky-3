@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <rect width="64" height="64" rx="12" fill="#0A0A0A"/>
+  <!-- Rocket body (tilted) -->
+  <g transform="rotate(-25 32 32)">
+    <!-- Nose cone (pink) -->
+    <path d="M32 8 L40 26 L24 26 Z" fill="#FF1F4D" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+    <!-- Body (black with stroke) -->
+    <rect x="24" y="26" width="16" height="22" fill="#0A0A0A" stroke="#000" stroke-width="2"/>
+    <!-- Porthole (cyan) -->
+    <circle cx="32" cy="34" r="4.2" fill="#1FC6F0" stroke="#000" stroke-width="2"/>
+    <!-- Left fin (pink) -->
+    <path d="M24 38 L16 48 L24 48 Z" fill="#FF1F4D" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+    <!-- Right fin (pink) -->
+    <path d="M40 38 L48 48 L40 48 Z" fill="#FF1F4D" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+    <!-- Body inner (cyan accent) -->
+    <rect x="28" y="40" width="8" height="8" fill="#1FC6F0" stroke="#000" stroke-width="2"/>
+    <!-- Flame (yellow) -->
+    <path d="M28 48 L32 60 L36 48 Z" fill="#FFD81F" stroke="#000" stroke-width="2" stroke-linejoin="round"/>
+  </g>
+</svg>
