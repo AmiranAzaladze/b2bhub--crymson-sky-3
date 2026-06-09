@@ -26,6 +26,8 @@ from pydantic import BaseModel, EmailStr, Field
 from b2bhub import fetch_b2bhub_data, bulk_sync_countries, list_country_slugs
 from seed_data import SEED_COUNTRIES, auto_abbreviation, default_content_for
 import analytics
+from blog import create_blog_router, ensure_blog_indexes, BLOG_UPLOAD_DIR
+from fastapi.staticfiles import StaticFiles
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Logging
@@ -699,6 +701,7 @@ async def analytics_clear_demo(user: Dict[str, Any] = Depends(get_current_user))
 @app.on_event("startup")
 async def on_startup() -> None:
     await ensure_indexes()
+    await ensure_blog_indexes(db)
     await seed_admin()
     await seed_countries()
     logger.info("Startup complete.")
@@ -710,6 +713,23 @@ async def on_shutdown() -> None:
 
 
 app.include_router(api)
+
+
+# ─── Blog router (uses host-header tenant resolution + tenant slug override)
+async def _blog_country_from_host(request: Request, tenant: Optional[str]):
+    if tenant:
+        c = await db.countries.find_one({"slug": tenant.lower()}, {"_id": 0})
+        if c:
+            return c
+    return await _country_from_host_header(request)
+
+
+blog_router = create_blog_router(db, get_current_user, _blog_country_from_host)
+app.include_router(blog_router, prefix="/api")
+
+
+# Serve uploaded blog media
+app.mount("/uploads", StaticFiles(directory=str(BLOG_UPLOAD_DIR)), name="uploads")
 
 app.add_middleware(
     CORSMiddleware,

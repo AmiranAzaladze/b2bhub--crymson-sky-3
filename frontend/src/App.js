@@ -6,6 +6,10 @@ import AdminLayout from "./pages/admin/AdminLayout";
 import AdminCountries from "./pages/admin/AdminCountries";
 import AdminCountryEdit from "./pages/admin/AdminCountryEdit";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
+import AdminBlogList from "./pages/admin/AdminBlogList";
+import AdminBlogEditor from "./pages/admin/AdminBlogEditor";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { Toaster } from "./components/ui/sonner";
 
@@ -54,6 +58,10 @@ function App() {
             {/* On admin/internal hosts, root redirects to /admin/login. */}
             <Route path="/" element={<RootRoute />} />
             <Route path="/preview/:slug" element={<Landing />} />
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/preview/:slug/blog" element={<Blog />} />
+            <Route path="/preview/:slug/blog/:postSlug" element={<BlogPost />} />
 
             {/* Admin */}
             <Route path="/admin/login" element={<AdminLogin />} />
@@ -67,8 +75,17 @@ function App() {
             >
               <Route index element={<AdminCountries />} />
               <Route path="analytics" element={<AdminAnalytics />} />
+              <Route path="blog" element={<AdminBlogList />} />
               <Route path="countries/:id" element={<AdminCountryEdit />} />
             </Route>
+            <Route
+              path="/admin/blog/:id"
+              element={
+                <Protected>
+                  <AdminBlogEditor />
+                </Protected>
+              }
+            />
 
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

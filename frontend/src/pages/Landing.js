@@ -14,6 +14,7 @@ import FinalCTA from "../components/landing/FinalCTA";
 import Footer from "../components/landing/Footer";
 import LiveChat from "../components/landing/LiveChat";
 import TrackingTags from "../components/landing/TrackingTags";
+import BlogSection from "../components/landing/BlogSection";
 
 const B2BHUB_URL = "https://b2bhub.ltd";
 
@@ -119,6 +120,7 @@ export default function Landing() {
         <Benefits data={content.benefits} />
         <Testimonials data={content.testimonials} />
         <FAQ data={content.faqs} />
+        <BlogSection country={country} tenant={slug} />
         <FinalCTA data={content.final_cta} onCTAClick={openLead} />
       </main>
       <Footer country={country} data={content.footer} />
