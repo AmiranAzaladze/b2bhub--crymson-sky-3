@@ -286,15 +286,20 @@ def create_blog_router(
 
     # ───────── Public: single post ─────────
     @router.get("/public/blog/{slug}")
-    async def public_get(slug: str, request: Request, tenant: Optional[str] = None):
+    async def public_get(slug: str, request: Request,
+                          tenant: Optional[str] = None,
+                          preview: Optional[str] = None):
         country = await country_from_host(request, tenant)
-        q: Dict[str, Any] = {"slug": slug, "status": "published"}
+        q: Dict[str, Any] = {"slug": slug}
         if country and country.get("id"):
             q["$or"] = [{"country_id": country["id"]}, {"country_id": None}]
         else:
             q["country_id"] = None
         doc = await db.blog_posts.find_one(q)
         if not doc:
+            raise HTTPException(status_code=404, detail="Post not found")
+        # Only allow draft posts when a matching preview token (= post id) is given.
+        if doc.get("status") != "published" and (not preview or preview != doc.get("id")):
             raise HTTPException(status_code=404, detail="Post not found")
         return _serialize(doc)
 

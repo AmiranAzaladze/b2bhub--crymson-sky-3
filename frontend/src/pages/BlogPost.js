@@ -24,10 +24,15 @@ export default function BlogPost() {
   React.useEffect(() => {
     (async () => {
       try {
-        const params = tenant ? `?tenant=${tenant}` : "";
+        const previewToken = new URLSearchParams(window.location.search).get("preview");
+        const qs = new URLSearchParams();
+        if (tenant) qs.set("tenant", tenant);
+        else qs.set("host", window.location.hostname);
+        if (previewToken) qs.set("preview", previewToken);
+        const landingQs = tenant ? `?tenant=${tenant}` : `?host=${window.location.hostname}`;
         const [postRes, landingRes] = await Promise.all([
-          api.get(`/public/blog/${slug}${params}`),
-          api.get(`/public/landing${params || `?host=${window.location.hostname}`}`),
+          api.get(`/public/blog/${slug}?${qs.toString()}`),
+          api.get(`/public/landing${landingQs}`),
         ]);
         setPost(postRes.data);
         setCountry(landingRes.data?.country || null);
@@ -94,6 +99,11 @@ export default function BlogPost() {
 
   return (
     <div className="min-h-screen bg-white text-zinc-900" data-testid="public-blog-post">
+      {post.status !== "published" && (
+        <div className="bg-amber-100 border-b border-amber-300 text-amber-900 text-[12.5px] font-medium text-center px-4 py-2">
+          ✏️ Draft preview — this post is not yet published. Only visible with the preview link.
+        </div>
+      )}
       <header className="border-b border-zinc-200 bg-white">
         <div className="max-w-[800px] mx-auto px-4 sm:px-6 py-5 flex items-center justify-between">
           <Link to={tenant ? `/preview/${tenant}` : "/"} className="flex items-center gap-2">

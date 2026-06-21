@@ -4,7 +4,8 @@ import api from "../../api/client";
 import { Loader2, Save, Trash2, Eye, ArrowLeft, X, Plus } from "lucide-react";
 import { toast } from "sonner";
 import RichTextEditor from "../../components/admin/RichTextEditor";
-import { CoverUpload, GalleryUpload } from "../../components/admin/MediaUpload";
+import { CoverUpload, GalleryUpload, toFullUrl } from "../../components/admin/MediaUpload";
+import apiClient from "../../api/client";
 
 export default function AdminBlogEditor() {
   const { id } = useParams();
@@ -78,10 +79,12 @@ export default function AdminBlogEditor() {
 
   const previewUrl = (() => {
     const c = countries.find((c) => c.id === post.country_id);
-    const host = c?.domain;
-    if (host) return `https://${host}/blog/${post.slug}`;
-    if (c?.slug) return `/preview/${c.slug}#blog`;
-    return `/blog/${post.slug}`;
+    // Always open the preview URL on the SAME origin as admin — this works for drafts
+    // too (preview token authorises draft viewing) and bypasses any DNS/SSL issues on
+    // the live country domain.
+    const tenantSlug = c?.slug || "uk";
+    const token = post.status !== "published" ? `?preview=${post.id}` : "";
+    return `/preview/${tenantSlug}/blog/${post.slug}${token}`;
   })();
 
   return (
@@ -194,24 +197,22 @@ export default function AdminBlogEditor() {
           </SidebarBlock>
 
           <SidebarBlock title="Author">
+            <div className="text-[10.5px] text-zinc-500 mb-2">
+              Use your real team name (e.g. &ldquo;Swift Editorial&rdquo; or your founder&apos;s name). Leave blank for anonymous — Google still indexes the post fine.
+            </div>
             <input
               value={post.author?.name || ""}
               onChange={(e) => updateAuthor({ name: e.target.value })}
-              placeholder="Name"
+              placeholder='Name (e.g. "Swift Editorial")'
               className="w-full h-9 px-3 mb-2 rounded-md bg-zinc-900 border border-zinc-800 text-[12.5px] text-zinc-100"
             />
-            <input
-              value={post.author?.avatar || ""}
-              onChange={(e) => updateAuthor({ avatar: e.target.value })}
-              placeholder="Avatar URL (or upload below)"
-              className="w-full h-9 px-3 mb-2 rounded-md bg-zinc-900 border border-zinc-800 text-[12.5px] text-zinc-100"
-            />
+            <AuthorAvatar value={post.author?.avatar} onChange={(v) => updateAuthor({ avatar: v })} />
             <textarea
               value={post.author?.bio || ""}
               onChange={(e) => updateAuthor({ bio: e.target.value })}
               rows={2}
-              placeholder="Short bio"
-              className="w-full px-3 py-2 rounded-md bg-zinc-900 border border-zinc-800 text-[12.5px] text-zinc-100"
+              placeholder='Short bio (e.g. "Formations team — 10 years helping founders.")'
+              className="w-full px-3 py-2 rounded-md bg-zinc-900 border border-zinc-800 text-[12.5px] text-zinc-100 mt-2"
             />
           </SidebarBlock>
         </aside>
@@ -236,6 +237,52 @@ const SidebarBlock = ({ title, children }) => (
     {children}
   </div>
 );
+
+function AuthorAvatar({ value, onChange }) {
+  const [busy, setBusy] = React.useState(false);
+  const inputRef = React.useRef(null);
+  const pick = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setBusy(true);
+    try {
+      const form = new FormData();
+      form.append("file", file);
+      const { data } = await apiClient.post("/admin/blog/upload", form, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      onChange(data.url);
+    } catch (err) {
+      toast.error(err?.response?.data?.detail || "Upload failed");
+    } finally {
+      setBusy(false);
+      e.target.value = "";
+    }
+  };
+  return (
+    <div className="flex items-center gap-2">
+      {value ? (
+        <>
+          <img src={toFullUrl(value)} alt="avatar" className="h-10 w-10 rounded-full object-cover border border-zinc-700" />
+          <button type="button" onClick={() => onChange(null)} className="text-[11px] text-zinc-400 hover:text-rose-300">Remove</button>
+        </>
+      ) : (
+        <>
+          <div className="h-10 w-10 rounded-full bg-zinc-800 border border-zinc-700 grid place-items-center text-zinc-500 text-[10px]">No avatar</div>
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            disabled={busy}
+            className="text-[11px] text-zinc-300 hover:text-zinc-100 px-2 py-1 rounded border border-dashed border-zinc-700 hover:border-zinc-500"
+          >
+            {busy ? "Uploading…" : "Upload avatar"}
+          </button>
+        </>
+      )}
+      <input ref={inputRef} type="file" accept="image/*" hidden onChange={pick} />
+    </div>
+  );
+}
 
 function TagInput({ value, onChange }) {
   const [v, setV] = React.useState("");
