@@ -22,6 +22,7 @@ import { contentScore, seoScore } from "../../lib/seoQuality";
 import { QualityBar } from "../../components/admin/QualityBar";
 import SeoTestsPanel from "../../components/admin/SeoTestsPanel";
 import SerpPreview from "../../components/admin/SerpPreview";
+import CountryBlogPanel from "../../components/admin/CountryBlogPanel";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "../../components/ui/dialog";
@@ -226,6 +227,7 @@ export default function AdminCountryEdit() {
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="bg-zinc-900 border border-zinc-800 mb-6 w-full sm:w-auto overflow-x-auto flex justify-start no-scrollbar">
               <TabsTrigger value="general" data-testid="tab-general" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">General</TabsTrigger>
+              <TabsTrigger value="blog" data-testid="tab-blog" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Blog</TabsTrigger>
               <TabsTrigger value="content" data-testid="tab-content" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Content</TabsTrigger>
               <TabsTrigger value="seo" data-testid="tab-seo" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">SEO</TabsTrigger>
               <TabsTrigger value="seo-tests" data-testid="tab-seo-tests" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">SEO tests</TabsTrigger>
@@ -293,6 +295,11 @@ export default function AdminCountryEdit() {
                 <Field label="Legal suffix" value={country.legal_suffix} onChange={(v) => updateCountry({ legal_suffix: v })} multiline />
                 <Field label="B2BHub country code" value={country.b2bhub_country_code} onChange={(v) => updateCountry({ b2bhub_country_code: v })} hint="GB / UA / DE…" />
               </Section>
+            </TabsContent>
+
+            {/* BLOG */}
+            <TabsContent value="blog" className="space-y-5">
+              <CountryBlogPanel country={country} />
             </TabsContent>
 
             {/* CONTENT */}

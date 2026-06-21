@@ -217,19 +217,6 @@ export default function AdminLayout() {
                   <span className="ml-auto h-1.5 w-1.5 rounded-full bg-green-500 live-dot" />
                 </NavLink>
 
-                <NavLink
-                  to="/admin/blog"
-                  className={({ isActive }) =>
-                    `flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[13px] font-medium transition-colors ${
-                      isActive ? "bg-zinc-800 text-zinc-50" : "text-zinc-400 hover:bg-zinc-800/60 hover:text-zinc-100"
-                    }`
-                  }
-                  data-testid="admin-nav-blog"
-                >
-                  <FileText className="h-3.5 w-3.5" />
-                  Blog
-                </NavLink>
-
                 <div className="h-3" />
 
                 {filteredCountries.length === 0 && search && (

@@ -79,12 +79,12 @@ export default function AdminBlogEditor() {
 
   const previewUrl = (() => {
     const c = countries.find((c) => c.id === post.country_id);
-    // Always open the preview URL on the SAME origin as admin — this works for drafts
-    // too (preview token authorises draft viewing) and bypasses any DNS/SSL issues on
-    // the live country domain.
-    const tenantSlug = c?.slug || "uk";
+    // Build a safe same-origin preview URL. Falls back to "uk" when no country
+    // is bound (global posts). URL-encodes the slug to survive spaces/weird chars.
+    const tenantSlug = encodeURIComponent(c?.slug || "uk");
+    const postSlug = encodeURIComponent(post.slug || "");
     const token = post.status !== "published" ? `?preview=${post.id}` : "";
-    return `/preview/${tenantSlug}/blog/${post.slug}${token}`;
+    return `/preview/${tenantSlug}/blog/${postSlug}${token}`;
   })();
 
   return (
