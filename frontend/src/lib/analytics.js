@@ -174,3 +174,37 @@ export function trackLeadSubmit() {
 export function trackNameCheck(result) {
   track("name_check", { result });
 }
+
+/**
+ * Start a live-presence heartbeat. Calls /api/presence every 30s while the tab
+ * is visible. Returns a stop() function for cleanup.
+ */
+const PRESENCE_ENDPOINT = `${BACKEND}/api/presence`;
+export function startPresence(tenantSlug) {
+  if (!tenantSlug || typeof window === "undefined") return () => {};
+  if (window.location.pathname.startsWith("/admin")) return () => {};
+
+  const send = () => {
+    if (document.visibilityState !== "visible") return;
+    const body = JSON.stringify({
+      tenant_slug: tenantSlug,
+      visitor_id: visitorId(),
+      session_id: sessionId(),
+      path: window.location.pathname,
+      host: window.location.hostname,
+    });
+    try {
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon(PRESENCE_ENDPOINT, new Blob([body], { type: "application/json" }));
+      } else {
+        fetch(PRESENCE_ENDPOINT, { method: "POST", body, keepalive: true, headers: { "Content-Type": "application/json" } });
+      }
+    } catch { /* swallow */ }
+  };
+
+  send(); // immediate
+  const interval = setInterval(send, 30_000);
+  const onVis = () => { if (document.visibilityState === "visible") send(); };
+  document.addEventListener("visibilitychange", onVis);
+  return () => { clearInterval(interval); document.removeEventListener("visibilitychange", onVis); };
+}

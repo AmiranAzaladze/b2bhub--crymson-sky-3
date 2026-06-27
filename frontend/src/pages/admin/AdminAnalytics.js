@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import SeoLeaderboard from "../../components/admin/SeoLeaderboard";
+import LivePresenceCard from "../../components/admin/LivePresenceCard";
 
 const PERIODS = [
   { v: "1h", l: "Last hour" },
@@ -181,6 +182,9 @@ export default function AdminAnalytics() {
       </div>
 
       <div className="flex-1 p-4 sm:p-8 lg:p-12 max-w-[1400px] w-full mx-auto space-y-6 sm:space-y-8">
+        {/* Live presence — visitors on landings right now */}
+        <LivePresenceCard countries={countries} />
+
         {/* KPI cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           <Kpi icon={Eye} label="Page views" value={overview?.current?.page_views} delta={overview?.delta?.page_views} />

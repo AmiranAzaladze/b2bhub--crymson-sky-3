@@ -631,6 +631,22 @@ async def track(payload: TrackBatch, request: Request):
     return {"ok": True, "received": inserted}
 
 
+# ─── Live presence (heartbeat) ───
+@api.post("/presence")
+async def presence(request: Request):
+    body = await request.json()
+    await analytics.upsert_presence(
+        db, body, dict(request.headers),
+        request.client.host if request.client else "unknown",
+    )
+    return {"ok": True}
+
+
+@api.get("/admin/analytics/live")
+async def analytics_live(user: Dict[str, Any] = Depends(get_current_user)):
+    return await analytics.live_presence(db)
+
+
 # ─── Analytics: admin ───
 @api.get("/admin/analytics/overview")
 async def analytics_overview(
@@ -702,6 +718,7 @@ async def analytics_clear_demo(user: Dict[str, Any] = Depends(get_current_user))
 async def on_startup() -> None:
     await ensure_indexes()
     await ensure_blog_indexes(db)
+    await analytics.ensure_presence_indexes(db)
     await seed_admin()
     await seed_countries()
     logger.info("Startup complete.")

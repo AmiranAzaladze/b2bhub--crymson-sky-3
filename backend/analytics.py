@@ -571,3 +571,65 @@ async def seed_demo_events(db, tenants: List[str], n_days: int = 30) -> int:
         for i in range(0, len(docs), 1000):
             await db.events.insert_many(docs[i:i + 1000])
     return len(docs)
+
+
+# ────────────────────────────── Live presence (heartbeats) ─────────────────
+
+
+async def ensure_presence_indexes(db) -> None:
+    """TTL index drops presence rows ~90s after last heartbeat."""
+    await db.presence.create_index("last_seen", expireAfterSeconds=90)
+    await db.presence.create_index("session_id")
+    await db.presence.create_index("tenant_slug")
+
+
+async def upsert_presence(db, body: Dict[str, Any], headers: Dict[str, str], client_host: str) -> None:
+    tenant = (body.get("tenant_slug") or "").strip().lower()[:32]
+    if not tenant:
+        return
+    sid = (body.get("session_id") or "")[:64]
+    vid = (body.get("visitor_id") or "")[:64]
+    if not sid:
+        return
+    ip = _client_ip(headers, client_host)
+    ua_info = parse_ua((headers or {}).get("user-agent", ""))
+    geo = await db.ip_geo.find_one({"ip": ip}, {"_id": 0}) or {}
+    doc = {
+        "session_id": sid,
+        "visitor_id": vid,
+        "tenant_slug": tenant,
+        "path": (body.get("path") or "")[:200],
+        "host": (body.get("host") or "")[:120],
+        "ip": ip,
+        "device_type": ua_info["device_type"],
+        "country": geo.get("country", "Unknown"),
+        "country_code": geo.get("country_code", "XX"),
+        "city": geo.get("city", ""),
+        "last_seen": datetime.now(timezone.utc),
+    }
+    await db.presence.update_one({"session_id": sid}, {"$set": doc}, upsert=True)
+
+
+async def live_presence(db) -> Dict[str, Any]:
+    """Aggregate currently-active sessions (last heartbeat within 90s)."""
+    cutoff = datetime.now(timezone.utc) - timedelta(seconds=90)
+    match = {"last_seen": {"$gte": cutoff}}
+    total = await db.presence.count_documents(match)
+    per_tenant: List[Dict[str, Any]] = []
+    async for row in db.presence.aggregate([
+        {"$match": match},
+        {"$group": {"_id": "$tenant_slug", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$limit": 50},
+    ]):
+        per_tenant.append({"tenant_slug": row["_id"], "count": row["count"]})
+    per_country: List[Dict[str, Any]] = []
+    async for row in db.presence.aggregate([
+        {"$match": match},
+        {"$group": {"_id": {"country": "$country", "code": "$country_code"}, "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$limit": 10},
+    ]):
+        per_country.append({"country": row["_id"]["country"], "code": row["_id"]["code"], "count": row["count"]})
+    return {"total": total, "per_tenant": per_tenant, "per_country": per_country}
+

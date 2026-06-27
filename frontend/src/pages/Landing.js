@@ -1,7 +1,7 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 import api from "../api/client";
-import { trackLeadOpen } from "../lib/analytics";
+import { trackLeadOpen, initAnalytics, startPresence } from "../lib/analytics";
 import Header from "../components/landing/Header";
 import Hero from "../components/landing/Hero";
 import TrustBar from "../components/landing/TrustBar";
@@ -39,6 +39,15 @@ export default function Landing() {
       .then((r) => setData(r.data))
       .catch((e) => setError(e?.response?.data?.detail || "Failed to load"));
   }, [slug]);
+
+  // Initialise analytics + live-presence heartbeat once we know the tenant.
+  React.useEffect(() => {
+    const slugVal = data?.country?.slug;
+    if (!slugVal) return;
+    initAnalytics(slugVal);
+    const stop = startPresence(slugVal);
+    return () => { stop && stop(); };
+  }, [data?.country?.slug]);
 
   // Dynamic per-domain SEO tags (title, description, canonical, OG/Twitter)
   // Must be called before any early returns to respect Rules of Hooks.
