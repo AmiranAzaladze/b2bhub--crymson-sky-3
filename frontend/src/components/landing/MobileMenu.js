@@ -1,9 +1,9 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowUpRight, MessageCircle, Send, CalendarCheck2, LayoutDashboard } from "lucide-react";
+import { X, ArrowUpRight, MessageCircle, Send, LayoutDashboard } from "lucide-react";
 import { Button } from "../ui/button";
 import { BrandMark } from "../../lib/Logo";
-import { WHATSAPP_HREF, TELEGRAM_URL, SELF_REGISTRATION_URL } from "../../lib/channels";
+import { WHATSAPP_HREF, TELEGRAM_URL, SELF_REGISTRATION_URL, ADVISOR_AVATAR, ADVISOR_NAME } from "../../lib/channels";
 
 const navItems = [
   { label: "How it works", href: "#how-it-works" },
@@ -165,11 +165,29 @@ export default function MobileMenu({ open, onClose, country, onCTAClick, onAdvis
                   onClick={() => { onClose(); onAdvisorClick?.(); }}
                   className="flex items-center gap-2.5 px-3 py-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-all text-left"
                   data-testid="mobile-menu-advisor"
+                  aria-label={`Talk to ${ADVISOR_NAME}`}
                 >
-                  <span className="h-8 w-8 rounded-full grid place-items-center bg-sky-500/90 shrink-0">
-                    <CalendarCheck2 className="h-3.5 w-3.5 text-white" />
+                  <span className="relative inline-block shrink-0">
+                    <img
+                      src={ADVISOR_AVATAR}
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                      className="h-8 w-8 rounded-full object-cover ring-2 ring-white/15"
+                    />
+                    <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
+                      <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
+                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-[#0A0A0A]" />
+                    </span>
                   </span>
-                  <span className="font-display font-semibold text-[14px] leading-tight">Talk to<br /><span className="font-mono text-[11px] font-normal text-white/55">Advisor</span></span>
+                  <span className="flex flex-col items-start leading-none min-w-0">
+                    <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-white/50 mb-0.5">
+                      Free · 30 min
+                    </span>
+                    <span className="font-display font-semibold text-[14px] truncate">
+                      Talk to {ADVISOR_NAME}
+                    </span>
+                  </span>
                 </button>
                 <a
                   href={SELF_REGISTRATION_URL}
@@ -181,7 +199,12 @@ export default function MobileMenu({ open, onClose, country, onCTAClick, onAdvis
                   <span className="h-8 w-8 rounded-full grid place-items-center bg-white/10 shrink-0">
                     <LayoutDashboard className="h-3.5 w-3.5 text-white" />
                   </span>
-                  <span className="font-display font-semibold text-[14px] leading-tight">Self<br /><span className="font-mono text-[11px] font-normal text-white/55">registration</span></span>
+                  <span className="flex flex-col items-start leading-none min-w-0">
+                    <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-white/50 mb-0.5">
+                      Existing client
+                    </span>
+                    <span className="font-display font-semibold text-[14px] truncate">Portal</span>
+                  </span>
                 </a>
               </motion.div>
 

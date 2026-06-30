@@ -1,10 +1,10 @@
 import React from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Button } from "../ui/button";
-import { ArrowRight, Menu, LayoutDashboard, ChevronRight, Headset } from "lucide-react";
+import { ArrowRight, Menu, LayoutDashboard, ChevronRight } from "lucide-react";
 import Logo from "../../lib/Logo";
 import MobileMenu from "./MobileMenu";
-import { SELF_REGISTRATION_URL } from "../../lib/channels";
+import { SELF_REGISTRATION_URL, ADVISOR_AVATAR, ADVISOR_NAME } from "../../lib/channels";
 
 const navItems = [
   { label: "How it works", href: "#how-it-works" },
@@ -74,12 +74,18 @@ export default function Header({ country, onCTAClick, onAdvisorClick }) {
             <button
               type="button"
               onClick={onAdvisorClick}
-              className="group relative h-10 pl-1.5 pr-3.5 inline-flex items-center gap-2 rounded-full bg-neutral-950 text-white border border-neutral-950 hover:bg-neutral-900 transition-all duration-200 hover:shadow-[0_10px_24px_-10px_rgba(0,0,0,0.55)] hover:-translate-y-0.5"
+              className="group relative h-10 pl-1.5 pr-3.5 inline-flex items-center gap-2.5 rounded-full bg-neutral-950 text-white border border-neutral-950 hover:bg-neutral-900 transition-all duration-200 hover:shadow-[0_10px_24px_-10px_rgba(0,0,0,0.55)] hover:-translate-y-0.5"
               data-testid="header-advisor-button"
-              aria-label="Talk to an advisor"
+              aria-label={`Talk to ${ADVISOR_NAME}, our formations advisor`}
             >
-              <span className="relative grid place-items-center h-7 w-7 rounded-full bg-white/10 ring-1 ring-white/15 shrink-0">
-                <Headset className="h-3.5 w-3.5 text-white" strokeWidth={2.2} aria-hidden="true" />
+              <span className="relative inline-block shrink-0">
+                <img
+                  src={ADVISOR_AVATAR}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  className="h-8 w-8 rounded-full object-cover ring-2 ring-white/15 group-hover:ring-white/30 transition-all"
+                />
                 {/* Online indicator */}
                 <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
@@ -92,7 +98,7 @@ export default function Header({ country, onCTAClick, onAdvisorClick }) {
                   Free · 30 min
                 </span>
                 <span className="font-display text-[13px] font-semibold text-white tracking-tight">
-                  Talk to advisor
+                  Talk to {ADVISOR_NAME}
                 </span>
               </span>
 
@@ -112,6 +118,31 @@ export default function Header({ country, onCTAClick, onAdvisorClick }) {
               <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
             </Button>
           </div>
+
+          {/* Mobile-only compact advisor button — sits to the LEFT of the hamburger so
+              the avatar is one of the first things a thumb reaches on small screens. */}
+          <button
+            type="button"
+            onClick={onAdvisorClick}
+            className="md:hidden ml-auto group relative h-9 pl-1 pr-3 inline-flex items-center gap-1.5 rounded-full bg-neutral-950 text-white shadow-[0_8px_18px_-10px_rgba(0,0,0,0.55)] active:scale-95 transition-transform"
+            data-testid="mobile-header-advisor-button"
+            aria-label={`Talk to ${ADVISOR_NAME}`}
+          >
+            <span className="relative inline-block shrink-0">
+              <img
+                src={ADVISOR_AVATAR}
+                alt=""
+                aria-hidden="true"
+                loading="lazy"
+                className="h-7 w-7 rounded-full object-cover ring-2 ring-white/20"
+              />
+              <span className="absolute -bottom-0.5 -right-0.5 flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500 ring-2 ring-neutral-950" />
+              </span>
+            </span>
+            <span className="font-display text-[12px] font-semibold tracking-tight">Advisor</span>
+          </button>
 
           <button
             onClick={() => setOpen(true)}

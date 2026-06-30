@@ -11,11 +11,11 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import { ArrowRight, CalendarCheck2, CheckCircle2, Loader2, Send, Sparkles, ExternalLink, Headset } from "lucide-react";
+import { ArrowRight, CalendarCheck2, CheckCircle2, Loader2, Send, Sparkles, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import api from "../../api/client";
 import { trackLeadSubmit } from "../../lib/analytics";
-import { WHATSAPP_HREF, TELEGRAM_URL, WHATSAPP_NUMBER } from "../../lib/channels";
+import { WHATSAPP_HREF, TELEGRAM_URL, WHATSAPP_NUMBER, ADVISOR_AVATAR, ADVISOR_NAME } from "../../lib/channels";
 
 // 30-min slots between 09:00 and 17:30 local time.
 const TIME_SLOTS = [
@@ -119,8 +119,13 @@ export default function AdvisorDialog({ open, onOpenChange, country }) {
           <>
             <DialogHeader className="px-7 pt-7 pb-2 text-left">
               <div className="flex items-center gap-3.5">
-                <span className="relative grid place-items-center h-12 w-12 rounded-full bg-neutral-950 shrink-0">
-                  <Headset className="h-5 w-5 text-white" strokeWidth={2.2} aria-hidden="true" />
+                <span className="relative inline-block shrink-0">
+                  <img
+                    src={ADVISOR_AVATAR}
+                    alt={ADVISOR_NAME}
+                    loading="lazy"
+                    className="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow-[0_4px_14px_-4px_rgba(0,0,0,0.25)]"
+                  />
                   <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
                     <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
                     <span className="relative inline-flex h-3 w-3 rounded-full bg-green-500 ring-2 ring-white" />
@@ -131,13 +136,13 @@ export default function AdvisorDialog({ open, onOpenChange, country }) {
                     Free 30-min consultation · Online now
                   </div>
                   <DialogTitle className="font-display text-[22px] font-bold tracking-tight text-neutral-950">
-                    Talk to a formations advisor
+                    Book a call with {ADVISOR_NAME}
                   </DialogTitle>
                 </div>
               </div>
               <DialogDescription className="text-[13.5px] text-neutral-600 mt-2.5 leading-relaxed">
-                Pick a slot below and we'll meet you in a private branded video room hosted on
-                forum.b2bhub.ltd — no Zoom, no install. You'll get a confirmation by email.
+                Pick a slot below and {ADVISOR_NAME} will join you in a private branded video room
+                hosted on forum.b2bhub.ltd — no Zoom, no install. You'll get a confirmation by email.
               </DialogDescription>
             </DialogHeader>
 
