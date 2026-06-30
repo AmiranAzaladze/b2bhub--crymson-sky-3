@@ -15,6 +15,7 @@ import Footer from "../components/landing/Footer";
 import LiveChat from "../components/landing/LiveChat";
 import TrackingTags from "../components/landing/TrackingTags";
 import BlogSection from "../components/landing/BlogSection";
+import LandingSchema from "../components/landing/LandingSchema";
 
 const B2BHUB_URL = "https://b2bhub.ltd";
 
@@ -111,6 +112,7 @@ export default function Landing() {
   }
 
   const { country, content, b2bhub } = data;
+  const siblings = data?.siblings || [];
 
   const openLead = () => {
     trackLeadOpen("redirect-b2bhub");
@@ -120,6 +122,7 @@ export default function Landing() {
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-[#0A0A0A] font-body" data-testid="landing-page">
       <TrackingTags tracking={content.tracking} scope={country.slug} />
+      <LandingSchema country={country} content={content} siblings={siblings} />
       <Header country={country} onCTAClick={openLead} />
       <main>
         <Hero country={country} hero={content.hero} b2bhub={b2bhub} onCTAClick={openLead} />

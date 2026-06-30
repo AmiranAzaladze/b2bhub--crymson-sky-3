@@ -351,7 +351,20 @@ async def public_landing(host: Optional[str] = None, tenant: Optional[str] = Non
         content_doc = {"content": default_content_for(_country_to_seed_format(country))}
 
     b2bhub = await fetch_b2bhub_data(country.get("b2bhub_country_code") or country.get("country_code", ""))
-    return {"country": country, "content": content_doc["content"], "b2bhub": b2bhub}
+    # Sibling domains for hreflang (lightweight projection)
+    siblings = []
+    async for s in db.countries.find(
+        {"status": "published", "domain": {"$ne": None, "$ne": ""}},
+        {"_id": 0, "domain": 1, "locale": 1, "country_code": 1, "slug": 1},
+    ):
+        if s.get("domain"):
+            siblings.append({
+                "domain": s["domain"],
+                "locale": s.get("locale") or "en",
+                "country_code": s.get("country_code", ""),
+                "slug": s.get("slug", ""),
+            })
+    return {"country": country, "content": content_doc["content"], "b2bhub": b2bhub, "siblings": siblings}
 
 
 async def _country_from_host_header(request: Request) -> Optional[Dict[str, Any]]:

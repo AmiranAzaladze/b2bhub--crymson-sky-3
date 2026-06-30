@@ -27,6 +27,20 @@ export default function Footer({ country, data }) {
             </div>
             <p className="text-[14px] text-white/60 leading-relaxed max-w-sm">{data.tagline}</p>
 
+            {(country.address || country.phone || country.capital) && (
+              <address className="not-italic mt-5 text-[12.5px] text-white/55 leading-relaxed space-y-0.5">
+                {country.address && <div data-testid="footer-address">{country.address}</div>}
+                {country.capital && country.country_code && (
+                  <div>{country.capital}, {country.country_code}</div>
+                )}
+                {country.phone && (
+                  <a href={`tel:${country.phone.replace(/\s+/g, "")}`} className="hover:text-white transition-colors block mt-1" data-testid="footer-phone">
+                    {country.phone}
+                  </a>
+                )}
+              </address>
+            )}
+
             <div className="mt-8 flex items-center gap-3">
               {[
                 { Icon: XIcon, key: "x", label: "X (Twitter)", url: data?.social?.x },

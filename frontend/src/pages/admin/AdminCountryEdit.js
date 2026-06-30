@@ -293,6 +293,10 @@ export default function AdminCountryEdit() {
                   <Field label="Authority short code" value={country.authority_short} onChange={(v) => updateCountry({ authority_short: v })} />
                 </div>
                 <Field label="Legal suffix" value={country.legal_suffix} onChange={(v) => updateCountry({ legal_suffix: v })} multiline />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Field label="Business phone (E.164)" value={country.phone} onChange={(v) => updateCountry({ phone: v })} hint="+44 20 1234 5678 — used in LocalBusiness schema + footer" />
+                  <Field label="Street address" value={country.address} onChange={(v) => updateCountry({ address: v })} hint="e.g. 71-75 Shelton Street, London — feeds LocalBusiness schema" />
+                </div>
                 <Field label="B2BHub country code" value={country.b2bhub_country_code} onChange={(v) => updateCountry({ b2bhub_country_code: v })} hint="GB / UA / DE…" />
               </Section>
             </TabsContent>
