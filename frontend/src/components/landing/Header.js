@@ -1,14 +1,10 @@
 import React from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Button } from "../ui/button";
-import { ArrowRight, Menu, LayoutDashboard } from "lucide-react";
+import { ArrowRight, Menu, LayoutDashboard, ChevronRight, Headset } from "lucide-react";
 import Logo from "../../lib/Logo";
 import MobileMenu from "./MobileMenu";
 import { SELF_REGISTRATION_URL } from "../../lib/channels";
-
-// Advisor photo — circular thumbnail next to the "Advisor" header button.
-const ADVISOR_PHOTO =
-  "https://customer-assets.emergentagent.com/job_easy-uk-register/artifacts/2g098d5f_image.png";
 
 const navItems = [
   { label: "How it works", href: "#how-it-works" },
@@ -74,19 +70,38 @@ export default function Header({ country, onCTAClick, onAdvisorClick }) {
               <LayoutDashboard className="h-3.5 w-3.5" />
               Portal
             </a>
+
             <button
               type="button"
               onClick={onAdvisorClick}
-              className="h-9 pl-1 pr-3.5 inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white text-[12.5px] font-medium text-neutral-900 hover:border-sky-400 hover:bg-sky-50 transition-colors"
+              className="group relative h-10 pl-1.5 pr-3.5 inline-flex items-center gap-2 rounded-full bg-neutral-950 text-white border border-neutral-950 hover:bg-neutral-900 transition-all duration-200 hover:shadow-[0_10px_24px_-10px_rgba(0,0,0,0.55)] hover:-translate-y-0.5"
               data-testid="header-advisor-button"
+              aria-label="Talk to an advisor"
             >
-              <img
-                src={ADVISOR_PHOTO}
-                alt="Advisor"
-                className="h-7 w-7 rounded-full object-cover border border-white shadow-[0_2px_6px_-2px_rgba(0,0,0,0.18)]"
+              <span className="relative grid place-items-center h-7 w-7 rounded-full bg-white/10 ring-1 ring-white/15 shrink-0">
+                <Headset className="h-3.5 w-3.5 text-white" strokeWidth={2.2} aria-hidden="true" />
+                {/* Online indicator */}
+                <span className="absolute -bottom-0.5 -right-0.5 flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-green-500 ring-2 ring-neutral-950" />
+                </span>
+              </span>
+
+              <span className="flex flex-col items-start leading-none">
+                <span className="font-mono text-[8.5px] uppercase tracking-[0.18em] text-white/55 mb-0.5">
+                  Free · 30 min
+                </span>
+                <span className="font-display text-[13px] font-semibold text-white tracking-tight">
+                  Talk to advisor
+                </span>
+              </span>
+
+              <ChevronRight
+                className="h-3.5 w-3.5 text-white/55 group-hover:text-white group-hover:translate-x-0.5 transition-all"
+                aria-hidden="true"
               />
-              Advisor
             </button>
+
             <Button
               onClick={onCTAClick}
               className="h-9 px-4 text-white rounded-full text-[13px] font-medium hover:opacity-90"

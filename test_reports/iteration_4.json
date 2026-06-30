@@ -1,0 +1,37 @@
+{
+  "summary": "End-to-end verification of new Swift Formations CTA wiring on /preview/uk: 3-button header (Portal / Talk to advisor / Start now), AdvisorDialog with day+time pickers and QR codes, LeadDialog from header + hero + mobile menu. Tested on BOTH desktop (1920x1080) and mobile (390x844) viewports as user explicitly requested. All 11 review scenarios pass. Backend POST /api/leads/submit and POST /api/leads/advisor-booking both return 200 with real Hub CRM ticket IDs (verified via curl + observed Playwright lead-success / advisor-success states).",
+  "backend_issues": { "critical": [], "minor": [] },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "MobileMenu advisor + portal tiles", "issues": ["The 'Talk to Advisor' tile uses a sky-blue CalendarCheck2 icon while the desktop header pill uses a dark Headset + green online dot. The visual language is inconsistent between the two surfaces — the mobile tile doesn't convey the 'live / 30 min / free' affordance the new desktop pill establishes. Consider matching: dark bg + Headset + pulsing green dot, and a 'Free · 30 min' caption."]}
+    ]
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_swift_formations.py",
+    "/app/backend/tests/test_analytics.py",
+    "/app/test_reports/pytest/pytest_analytics.xml"
+  ],
+  "action_items": [
+    "OPTIONAL — align MobileMenu advisor tile design with the new header pill (dark + Headset + pulsing green dot + 'Free · 30 min' caption) so the affordance is consistent on mobile.",
+    "OPTIONAL — Portal tile label on mobile menu reads 'Self registration' while desktop header reads 'Portal'. Pick one term across both surfaces to reduce cognitive load."
+  ],
+  "critical_code_review_comments": [
+    "Header.js builds 3 different button visual treatments (anchor / dark pill / brand pink Button). All are at h-9/h-10 — fine — but the spacing 'gap-2' between them is tight at 1024px breakpoint where the long nav also shows. Consider gap-2.5 or hide the nav at <1280px to avoid wrapping on small laptops.",
+    "AdvisorDialog.js:nextWorkingDays uses React.useMemo with empty deps so it computes once at mount. If the dialog stays open across midnight (e.g. user leaves the tab), the day list will reference yesterday. Low risk but worth a refresh-on-open guard tied to `open`.",
+    "AdvisorDialog.js:toIsoSlot uses `new Date(d); out.setHours(...)` then toISOString — this converts the chosen LOCAL time to UTC. The display shows '13:00' (local) but the payload sends UTC. If the advisor is in a different timezone than the visitor, the 1pm slot they see is NOT what the booking system stores. Either send a tz field or use the brand's office timezone consistently.",
+    "MobileMenu.js advisor tile and CTA call onClose() then immediately onAdvisorClick()/onCTAClick(). Because Dialog mounts during the menu's 220ms exit animation, there's a brief frame where both overlays co-exist (z-100 menu + z-50 dialog). Visually fine because the dialog re-portals to body, but consider an onClose() then setTimeout(220, openDialog) for cleaner unmount stacking.",
+    "AdvisorDialog default time is hard-coded to TIME_SLOTS[8] = '13:00'. If a visitor opens the dialog at 14:30 today and picks today (well — code skips today, but on Mondays the first 'tomorrow' could already have past 13:00 if it's been across timezones). Consider clamping default time to next-available-slot from now.",
+    "Header.js 'header-self-registration' anchor lacks data-analytics tag (other CTAs are tracked via trackLeadSubmit/trackCTAClick). Portal clicks will be invisible in analytics — add a tracking handler.",
+    "AdvisorDialog success state error path: when api.post throws, `setResult` is never called so the form stays mounted with toast — good. But `loading` is reset in finally — also good. No issue, just confirming the resilience."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100% (POST /leads/submit + POST /leads/advisor-booking both 200)", "frontend": "100% (11/11 review scenarios: 6 desktop + 5 mobile)"},
+  "test_credentials": "Not needed — all pages are public.",
+  "seed_data_creation": "5 real leads were submitted to Hub CRM via the inquiry + advisor endpoints during testing (prefixed TEST_). They carry real Hub CRM ticket IDs. Hub CRM cleanup not in scope.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Public landing tenant route is /preview/uk on https://easy-uk-register.preview.emergentagent.com. Critical data-testids: header-self-registration (Portal anchor target=_blank href=b2bhub.ltd/dashboard), header-advisor-button (opens advisor-dialog), header-cta-button (opens lead-dialog), hero-primary-cta (opens lead-dialog). AdvisorDialog: advisor-day-picker has 7 working-day buttons, advisor-time-picker has 18 slots 09:00-17:30, advisor-time-{HHMM} (no colon), advisor-qr-whatsapp/telegram, advisor-submit -> advisor-success. LeadDialog: lead-{name,email,phone,company,idea}, lead-submit -> lead-success. MobileMenu (only <md): mobile-menu-toggle, mobile-menu, mobile-menu-cta, mobile-menu-advisor, mobile-menu-portal, mobile-menu-whatsapp, mobile-menu-telegram. Mobile menu calls onClose() before opening dialogs — AnimatePresence keeps it mounted ~220ms during exit, so is_visible(mobile-menu) may briefly return true after dialog opens (NOT a bug). Backend: /api/leads/submit returns {ok,ticket_id,raw}; /api/leads/advisor-booking returns {ok,meeting_link,meeting,fallback,ticket_id} with fallback=true normally (service token only authorizes /contact/submit fallback — expected per hub_crm.py).",
+  "rca_of_the_issue": "N/A — all scenarios pass. The only quasi-finding is the design inconsistency between the new desktop advisor pill (dark + Headset + pulsing green) and the existing mobile-menu advisor tile (sky-blue CalendarCheck2). Reported as a design issue, not a bug."
+}
