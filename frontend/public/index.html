@@ -24,13 +24,41 @@
         work correctly both with client-side routing and a non-root public URL.
         Learn how to configure a non-root public URL by running `npm run build`.
         -->
-        <title>Swift Formations — Register your company in 24 hours</title>
+        <title>Swift Formations — Register your company online in 24 hours</title>
         <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
-        <style>#emergent-badge{display:none !important;visibility:hidden !important;}</style>
+        <style>
+            #emergent-badge{display:none !important;visibility:hidden !important;}
+            /* SEO fallback shell — visible to non-JS crawlers (SEOptimer, Seobility, Ahrefs site audit),
+               replaced instantly when React mounts. Styled to match the React loading state. */
+            .seo-shell{position:fixed;inset:0;display:grid;place-items:center;background:#FAFAFA;color:#0A0A0A;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:24px;text-align:center;z-index:1}
+            .seo-shell h1{font-size:clamp(28px,5vw,44px);font-weight:700;letter-spacing:-0.03em;line-height:1.05;margin:0 0 16px;max-width:780px}
+            .seo-shell p{font-size:15px;color:#525252;max-width:560px;margin:0 auto 20px;line-height:1.55}
+            .seo-shell nav{margin-top:8px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center;font-size:13px}
+            .seo-shell nav a{color:#0A0A0A;text-decoration:underline;text-underline-offset:3px}
+            .seo-shell .loading{margin-top:24px;font-size:11px;letter-spacing:0.22em;text-transform:uppercase;color:#737373;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+        </style>
     </head>
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
-        <div id="root"></div>
+        <div id="root">
+            <!-- Bot-visible fallback: provides H1, internal links, and content match for raw-HTML SEO crawlers.
+                 React replaces this entire subtree on hydration with the dynamic, per-tenant landing page. -->
+            <div class="seo-shell" aria-hidden="false">
+                <main>
+                    <h1>Register your company online in 24 hours</h1>
+                    <p>Swift Formations is a trusted incorporation agent helping founders launch limited companies in 250+ jurisdictions — fast, fully digital, and supported by experts.</p>
+                    <nav aria-label="Primary">
+                        <a href="#how-it-works">How it works</a>
+                        <a href="#pricing">Pricing</a>
+                        <a href="#benefits">Benefits</a>
+                        <a href="#testimonials">Reviews</a>
+                        <a href="/blog">Blog</a>
+                        <a href="#faq">FAQ</a>
+                    </nav>
+                    <div class="loading">loading…</div>
+                </main>
+            </div>
+        </div>
         <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.

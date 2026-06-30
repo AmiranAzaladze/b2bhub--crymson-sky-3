@@ -22,6 +22,23 @@
   status = 200
   force  = true
 
+# Force www → non-www across every attached custom domain.
+# Netlify's `*` wildcard greedily captures the rest of the URL (hostname + path),
+# and `:splat` substitutes it back, so https://www.example.com/foo becomes
+# https://example.com/foo for ALL attached custom domains in a single rule.
+# Required by SEOptimer / Seobility audits to consolidate link equity to one canonical host.
+[[redirects]]
+  from   = "https://www.*"
+  to     = "https://:splat"
+  status = 301
+  force  = true
+
+[[redirects]]
+  from   = "http://www.*"
+  to     = "https://:splat"
+  status = 301
+  force  = true
+
 # SPA fallback — every path returns index.html so React Router can handle it
 [[redirects]]
   from   = "/*"

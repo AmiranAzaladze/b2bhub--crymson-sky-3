@@ -57,8 +57,17 @@ export default function Landing() {
     const country = data.country || {};
     const content = data.content || {};
     const seo = content.seo || {};
-    const title = seo.title || `${country.brand_name || ""} — Register a ${country.name || ""} company in 24 hours`;
-    const description = seo.description || "";
+    const hero = content.hero || {};
+    // Build a title that naturally shares keywords with the rendered <h1>
+    // so SEO crawlers see strong title↔content relevance.
+    const heroFullHeadline = [hero.headline_prefix, hero.headline_highlight, hero.headline_suffix]
+      .filter(Boolean).join(" ").replace(/\s+/g, " ").trim();
+    const title =
+      seo.title ||
+      (heroFullHeadline
+        ? `${heroFullHeadline} | ${country.brand_name || ""}`.trim().replace(/\|\s*$/, "")
+        : `${country.brand_name || ""} — Register a ${country.name || ""} company in 24 hours`);
+    const description = seo.description || hero.sub || "";
     const domain = country.domain || window.location.hostname;
     const canonical = `https://${domain}/`;
 

@@ -59,3 +59,28 @@ Single admin panel managing landing pages for many countries (own domain each), 
 1. Push to GitHub & deploy on Railway (support_agent guide provided earlier)
 2. Attach country domains
 3. Provide real B2BHub credentials when ready
+
+## SEO Phase 2 — DOM + Redirect Fixes (Feb 2026)
+Addresses the SEOptimer/Seobility To-Do list reported by the user.
+- **`public/index.html`**: added bot-visible `<h1>` ("Register your company online in 24 hours"),
+  `<p>` description, and 6 primary `<nav>` links inside `#root`. Visible to non-JS crawlers
+  (SEOptimer, Seobility, Ahrefs site audit) and replaced by React on hydration. Static `<title>`
+  updated to match the new H1 verbatim for title-content relevance.
+- **`netlify.toml`**: added two global 301 redirects (`https://www.* → https://:splat` and
+  `http://www.* → https://:splat`) — a single rule that strips `www.` across **all 253**
+  attached custom domains. Force=true overrides Netlify's per-domain primary setting.
+- **`src/pages/Landing.js`**: when admins leave the `seo.title` field blank, the runtime
+  `document.title` now auto-derives from the hero headline (`prefix + highlight + suffix`),
+  guaranteeing title↔H1 keyword overlap on every country page.
+- Heading hierarchy audited across `Hero`, `HowItWorks`, `Pricing`, `Benefits`, `Testimonials`,
+  `FAQ`, `BlogSection`, `FinalCTA`, `Footer`: 1×h1, 6×h2, 22×h3, no skipped levels.
+- Smoke-tested via curl + Playwright on `/preview/uk` — confirmed 1 h1, correct title match,
+  and 6 internal nav links present in raw HTML.
+
+## Pending (P1)
+- SEO Audit lead-magnet tool at `/tools/seo-audit` + user-facing SaaS dashboard (separate user auth)
+- Lead gen: exit-intent popup, sticky mobile CTA bar, WhatsApp deep-link
+- Live visitor count widget on hero ("🟢 X founders viewing right now")
+
+## Blocked
+- Netlify SSL provisioning deadlock for newly attached domains — awaiting Netlify Support ticket.
