@@ -77,6 +77,17 @@ Addresses the SEOptimer/Seobility To-Do list reported by the user.
 - Smoke-tested via curl + Playwright on `/preview/uk` — confirmed 1 h1, correct title match,
   and 6 internal nav links present in raw HTML.
 
+## Sparkles Icon Purge (Feb 2026)
+User explicitly requested removal of all sparkle/AI-style icons from every surface.
+
+- `Hero.js`: dropped `Sparkles` from imports + from the "Free company name check" eyebrow.
+- `Benefits.js`: dropped `Sparkles` import; benefit-item fallback icon → `Star`; bottom CTA banner icon → `ArrowRight`.
+- `HowItWorks.js`: step fallback icon → `Star`.
+- `AdvisorDialog.js`: dropped `Sparkles` from imports + from the "Prefer chat? Scan to message us" section header.
+- `AdminCountryEdit.js`: `makeNew` defaults for new Benefits items + How-it-works steps now use `icon: "Star"` instead of `icon: "Sparkles"`, so admins can't accidentally re-introduce the glyph.
+- MongoDB audit: 0 existing tenant content docs had `items[].icon === "Sparkles"` — no data migration needed.
+- Verified by testing agent (iteration_6): 0 `.lucide-sparkles` elements rendered on landing, in either dialog, in mobile menu, or in admin Content tab after adding a new row.
+
 ## Hub CRM Inquiry Form + Advisor Booking (Feb 2026)
 Connects all landing-page CTAs to B2B Hub CRM instead of redirecting to b2bhub.ltd.
 
