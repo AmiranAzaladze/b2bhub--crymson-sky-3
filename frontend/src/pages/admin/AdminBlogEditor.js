@@ -182,13 +182,14 @@ export default function AdminBlogEditor() {
               onChange={(e) => update({ country_id: e.target.value || null })}
               className="w-full h-9 px-2 rounded-md bg-zinc-900 border border-zinc-800 text-[12.5px] text-zinc-100"
             >
-              <option value="">🌍 All countries (global)</option>
+              <option value="">— Pick a country —</option>
               {countries.map((c) => (
                 <option key={c.id} value={c.id}>{c.flag_emoji ? c.flag_emoji + " " : ""}{c.name}</option>
               ))}
             </select>
             <div className="text-[10.5px] text-zinc-500 mt-1.5">
-              Global posts appear on every tenant&apos;s blog. Country-specific posts only show on that country.
+              Posts are strictly scoped to one country&apos;s landing.
+              Use the Blog tab inside each country to manage that country&apos;s articles.
             </div>
           </SidebarBlock>
 

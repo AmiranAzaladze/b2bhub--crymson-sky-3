@@ -239,29 +239,42 @@ def create_blog_router(
         if file.content_type not in ALLOWED_IMAGE_TYPES:
             raise HTTPException(status_code=400, detail=f"Unsupported type: {file.content_type}")
 
-        # Stream-write with size guard
-        ext = {
-            "image/jpeg": ".jpg", "image/png": ".png",
-            "image/webp": ".webp", "image/gif": ".gif", "image/svg+xml": ".svg",
-        }[file.content_type]
-        fname = f"{uuid.uuid4().hex}{ext}"
-        dst = BLOG_UPLOAD_DIR / "blog" / fname
-
+        # Read into memory with size guard (small images, ≤5MB cap)
         size = 0
-        with dst.open("wb") as f:
-            while True:
-                chunk = await file.read(1024 * 64)
-                if not chunk:
-                    break
-                size += len(chunk)
-                if size > MAX_IMAGE_BYTES:
-                    f.close()
-                    dst.unlink(missing_ok=True)
-                    raise HTTPException(status_code=413, detail="File too large (max 5MB)")
-                f.write(chunk)
+        chunks = []
+        while True:
+            chunk = await file.read(1024 * 64)
+            if not chunk:
+                break
+            size += len(chunk)
+            if size > MAX_IMAGE_BYTES:
+                raise HTTPException(status_code=413, detail="File too large (max 5MB)")
+            chunks.append(chunk)
+        data = b"".join(chunks)
 
-        url = f"/uploads/blog/{fname}"
-        return {"url": url, "size": size, "filename": fname}
+        # Persist in MongoDB (survives Railway redeploys, unlike local disk)
+        media_id = uuid.uuid4().hex
+        await db.blog_media.insert_one({
+            "id": media_id,
+            "content_type": file.content_type,
+            "size": size,
+            "data": data,
+            "created_at": now_utc(),
+        })
+        return {"url": f"/api/media/{media_id}", "size": size, "filename": file.filename}
+
+    # ───────── Public: serve uploaded image ─────────
+    @router.get("/media/{media_id}")
+    async def public_media(media_id: str):
+        doc = await db.blog_media.find_one({"id": media_id})
+        if not doc:
+            raise HTTPException(status_code=404, detail="Not found")
+        from fastapi import Response
+        return Response(
+            content=doc["data"],
+            media_type=doc.get("content_type", "application/octet-stream"),
+            headers={"Cache-Control": "public, max-age=31536000, immutable"},
+        )
 
     # ───────── Public: list posts for current tenant ─────────
     @router.get("/public/blog")
@@ -272,12 +285,10 @@ def create_blog_router(
         tag: Optional[str] = None,
     ):
         country = await country_from_host(request, tenant)
-        q: Dict[str, Any] = {"status": "published"}
-        # Include both per-country and global posts
-        if country and country.get("id"):
-            q["$or"] = [{"country_id": country["id"]}, {"country_id": None}]
-        else:
-            q["country_id"] = None
+        # Strict per-country: only return posts bound to THIS country.
+        if not (country and country.get("id")):
+            return {"posts": []}
+        q: Dict[str, Any] = {"status": "published", "country_id": country["id"]}
         if tag:
             q["tags"] = tag
         cursor = db.blog_posts.find(q).sort("published_at", -1).limit(max(1, min(limit, 50)))
@@ -290,11 +301,9 @@ def create_blog_router(
                           tenant: Optional[str] = None,
                           preview: Optional[str] = None):
         country = await country_from_host(request, tenant)
-        q: Dict[str, Any] = {"slug": slug}
-        if country and country.get("id"):
-            q["$or"] = [{"country_id": country["id"]}, {"country_id": None}]
-        else:
-            q["country_id"] = None
+        if not (country and country.get("id")):
+            raise HTTPException(status_code=404, detail="Post not found")
+        q: Dict[str, Any] = {"slug": slug, "country_id": country["id"]}
         doc = await db.blog_posts.find_one(q)
         if not doc:
             raise HTTPException(status_code=404, detail="Post not found")

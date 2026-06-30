@@ -24,13 +24,7 @@ export default function CountryBlogPanel({ country }) {
     setLoading(true);
     try {
       const { data } = await api.get(`/admin/blog?country_id=${country.id}`);
-      const { data: globals } = await api.get(`/admin/blog`);
-      const globalOnly = (globals || []).filter((p) => !p.country_id);
-      // Merge: this-country posts first, then global posts (de-duped)
-      const merged = [...(data || [])];
-      const seen = new Set(merged.map((p) => p.id));
-      globalOnly.forEach((p) => { if (!seen.has(p.id)) merged.push({ ...p, _global: true }); });
-      setPosts(merged);
+      setPosts(data || []);
     } finally { setLoading(false); }
   }, [country.id]);
 
@@ -64,7 +58,6 @@ export default function CountryBlogPanel({ country }) {
           </h2>
           <p className="text-[12px] text-zinc-500 mt-0.5">
             Posts created here appear only on this country&apos;s blog.
-            Global posts (visible everywhere) are listed below with a 🌍 marker.
           </p>
         </div>
         <button
