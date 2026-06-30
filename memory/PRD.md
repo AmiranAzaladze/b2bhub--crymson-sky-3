@@ -77,10 +77,40 @@ Addresses the SEOptimer/Seobility To-Do list reported by the user.
 - Smoke-tested via curl + Playwright on `/preview/uk` — confirmed 1 h1, correct title match,
   and 6 internal nav links present in raw HTML.
 
-## Pending (P1)
-- SEO Audit lead-magnet tool at `/tools/seo-audit` + user-facing SaaS dashboard (separate user auth)
-- Lead gen: exit-intent popup, sticky mobile CTA bar, WhatsApp deep-link
-- Live visitor count widget on hero ("🟢 X founders viewing right now")
+## Hub CRM Inquiry Form + Advisor Booking (Feb 2026)
+Connects all landing-page CTAs to B2B Hub CRM instead of redirecting to b2bhub.ltd.
+
+**Backend (`backend/hub_crm.py` + 2 routes in `server.py`):**
+- `POST /api/leads/submit` → forwards to Hub CRM `POST https://b2bhub.ltd/api/contact/submit`
+  (public, no auth). Returns `{ok, ticket_id}`. Used by every "Start now" CTA.
+- `POST /api/leads/advisor-booking` → tries Hub CRM `POST /api/video-meetings/advisor-booking`
+  with the service Bearer token; falls back to `/contact/submit` with `category="advisor-meeting"`
+  when the upstream returns 401/403 (service token isn't user-scoped — needs a real user JWT
+  for native forum-meeting creation; once provided, native flow auto-activates).
+- Env: `HUB_CRM_API_TOKEN`, `HUB_CRM_BASE_URL` added to `backend/.env`.
+
+**Frontend:**
+- `LeadDialog.js`: now POSTs to `/api/leads/submit` with tenant context (slug, brand, domain).
+  Added optional Company field. Real success/error toasts via sonner.
+- `AdvisorDialog.js` (new): Anna headshot, 7-working-day picker, 18×30-min time slots,
+  name/email/phone/note form, posts to `/api/leads/advisor-booking`, shows meeting link or
+  "We'll confirm by email" depending on which path Hub CRM accepted. Renders WhatsApp +
+  Telegram **QR codes** (qrcode.react) at the bottom of the dialog.
+- `Header.js`: 2 new desktop buttons — **Portal** (LayoutDashboard icon → opens
+  `https://b2bhub.ltd/dashboard` in new tab) and **Advisor** (Anna thumbnail → opens
+  AdvisorDialog).
+- `MobileMenu.js`: matching Advisor + Portal tiles in the mobile menu.
+- `Landing.js`: replaces `window.open(B2BHUB_URL)` with `setLeadOpen(true)` / `setAdvisorOpen(true)`.
+  All Start-now CTAs (header, hero, pricing, final-CTA) now open the inquiry dialog.
+- `src/lib/channels.js` (new): centralised constants for WHATSAPP, TELEGRAM, SELF_REGISTRATION_URL.
+  `LiveChat.js` and `MobileMenu.js` refactored to import from here.
+- Dep: added `qrcode.react@4.2.0` via yarn.
+
+**Verified end-to-end:**
+- `curl POST /api/leads/submit` → real Hub CRM ticket id returned.
+- Playwright submits the LeadDialog form via UI → success view + toast appear, backend logs
+  show `POST /api/leads/submit HTTP/1.1 200 OK`.
+- AdvisorDialog renders with day/time pickers, both QR codes, and tested booking path.
 
 ## Blocked
 - Netlify SSL provisioning deadlock for newly attached domains — awaiting Netlify Support ticket.

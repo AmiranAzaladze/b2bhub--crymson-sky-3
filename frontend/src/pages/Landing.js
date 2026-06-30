@@ -16,13 +16,15 @@ import LiveChat from "../components/landing/LiveChat";
 import TrackingTags from "../components/landing/TrackingTags";
 import BlogSection from "../components/landing/BlogSection";
 import LandingSchema from "../components/landing/LandingSchema";
-
-const B2BHUB_URL = "https://b2bhub.ltd";
+import LeadDialog from "../components/landing/LeadDialog";
+import AdvisorDialog from "../components/landing/AdvisorDialog";
 
 export default function Landing() {
   const { slug } = useParams();
   const [data, setData] = React.useState(null);
   const [error, setError] = React.useState(null);
+  const [leadOpen, setLeadOpen] = React.useState(false);
+  const [advisorOpen, setAdvisorOpen] = React.useState(false);
 
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -124,15 +126,19 @@ export default function Landing() {
   const siblings = data?.siblings || [];
 
   const openLead = () => {
-    trackLeadOpen("redirect-b2bhub");
-    window.open(B2BHUB_URL, "_blank", "noopener,noreferrer");
+    trackLeadOpen("inquiry-form");
+    setLeadOpen(true);
+  };
+  const openAdvisor = () => {
+    trackLeadOpen("advisor-dialog");
+    setAdvisorOpen(true);
   };
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] text-[#0A0A0A] font-body" data-testid="landing-page">
       <TrackingTags tracking={content.tracking} scope={country.slug} />
       <LandingSchema country={country} content={content} siblings={siblings} />
-      <Header country={country} onCTAClick={openLead} />
+      <Header country={country} onCTAClick={openLead} onAdvisorClick={openAdvisor} />
       <main>
         <Hero country={country} hero={content.hero} b2bhub={b2bhub} onCTAClick={openLead} />
         <TrustBar trustBar={content.trust_bar} />
@@ -146,6 +152,8 @@ export default function Landing() {
       </main>
       <Footer country={country} data={content.footer} />
       <LiveChat />
+      <LeadDialog open={leadOpen} onOpenChange={setLeadOpen} country={country} />
+      <AdvisorDialog open={advisorOpen} onOpenChange={setAdvisorOpen} country={country} />
     </div>
   );
 }

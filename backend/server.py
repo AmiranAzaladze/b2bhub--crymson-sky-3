@@ -17,6 +17,7 @@ from datetime import datetime, timezone, timedelta
 from typing import Any, Dict, List, Optional
 
 import bcrypt
+import httpx
 import jwt
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -26,6 +27,7 @@ from pydantic import BaseModel, EmailStr, Field
 from b2bhub import fetch_b2bhub_data, bulk_sync_countries, list_country_slugs
 from seed_data import SEED_COUNTRIES, auto_abbreviation, default_content_for
 import analytics
+import hub_crm
 from blog import create_blog_router, ensure_blog_indexes, BLOG_UPLOAD_DIR
 from fastapi.staticfiles import StaticFiles
 
@@ -178,6 +180,28 @@ class CountryOut(CountryIn):
 
 class ContentPatch(BaseModel):
     content: Dict[str, Any]
+
+
+class LeadSubmit(BaseModel):
+    name: str = Field(..., min_length=1, max_length=120)
+    email: EmailStr
+    phone: Optional[str] = None
+    company: Optional[str] = None
+    message: Optional[str] = None
+    tenant_slug: Optional[str] = None
+    tenant_brand: Optional[str] = None
+    tenant_domain: Optional[str] = None
+
+
+class AdvisorBookingIn(BaseModel):
+    name: str = Field(..., min_length=1, max_length=120)
+    email: EmailStr
+    phone: Optional[str] = None
+    preferred_at: str  # ISO-8601, e.g. "2026-07-01T14:00:00Z"
+    duration_minutes: int = 30
+    note: Optional[str] = None
+    tenant_slug: Optional[str] = None
+    tenant_brand: Optional[str] = None
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -653,6 +677,58 @@ async def presence(request: Request):
         request.client.host if request.client else "unknown",
     )
     return {"ok": True}
+
+
+# ─── Hub CRM: public lead form (every "Start now" CTA) ───
+@api.post("/leads/submit")
+async def leads_submit(payload: LeadSubmit):
+    try:
+        result = await hub_crm.submit_inquiry(
+            name=payload.name,
+            email=payload.email,
+            phone=payload.phone,
+            company=payload.company,
+            message=payload.message,
+            tenant_slug=payload.tenant_slug,
+            tenant_brand=payload.tenant_brand,
+            tenant_domain=payload.tenant_domain,
+        )
+        return {"ok": True, "ticket_id": result.get("ticket_id"), "raw": result}
+    except httpx.HTTPStatusError as e:
+        logger.warning("Hub CRM submit_inquiry failed: %s — %s", e.response.status_code, e.response.text)
+        raise HTTPException(status_code=502, detail="Could not deliver inquiry to CRM. Please try again.")
+    except Exception as e:
+        logger.exception("Hub CRM submit_inquiry error: %s", e)
+        raise HTTPException(status_code=502, detail="Could not deliver inquiry to CRM. Please try again.")
+
+
+# ─── Hub CRM: book the B2B Hub advisor (Anna) — forum video meeting ───
+@api.post("/leads/advisor-booking")
+async def leads_advisor_booking(payload: AdvisorBookingIn):
+    try:
+        result = await hub_crm.book_advisor(
+            name=payload.name,
+            email=payload.email,
+            phone=payload.phone,
+            preferred_at=payload.preferred_at,
+            duration_minutes=payload.duration_minutes,
+            note=payload.note,
+            tenant_slug=payload.tenant_slug,
+            tenant_brand=payload.tenant_brand,
+        )
+        return {
+            "ok": True,
+            "meeting_link": result.get("meeting_link"),
+            "meeting": result.get("meeting"),
+            "fallback": bool(result.get("fallback")),
+            "ticket_id": result.get("ticket_id"),
+        }
+    except httpx.HTTPStatusError as e:
+        logger.warning("Hub CRM advisor-booking failed: %s — %s", e.response.status_code, e.response.text)
+        raise HTTPException(status_code=502, detail="Could not book the advisor right now. Please try another time.")
+    except Exception as e:
+        logger.exception("Hub CRM advisor-booking error: %s", e)
+        raise HTTPException(status_code=502, detail="Could not book the advisor right now. Please try another time.")
 
 
 @api.get("/admin/analytics/live")

@@ -1,10 +1,6 @@
 import React from "react";
 import { MessageCircle, Send, X } from "lucide-react";
-
-const WHATSAPP_NUMBER = "+4412345678";
-const TELEGRAM_URL = "https://t.me/B2BHub_inbox_bot";
-
-const WHATSAPP_HREF = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}`;
+import { WHATSAPP_HREF, TELEGRAM_URL } from "../../lib/channels";
 
 export default function LiveChat() {
   const [open, setOpen] = React.useState(false);

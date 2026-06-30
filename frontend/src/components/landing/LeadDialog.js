@@ -13,16 +13,17 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { ArrowRight, CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import api from "../../api/client";
 import { trackLeadSubmit } from "../../lib/analytics";
 
 export default function LeadDialog({ open, onOpenChange, country }) {
-  const [form, setForm] = React.useState({ name: "", email: "", phone: "", idea: "" });
+  const [form, setForm] = React.useState({ name: "", email: "", phone: "", company: "", idea: "" });
   const [errors, setErrors] = React.useState({});
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
 
   const reset = () => {
-    setForm({ name: "", email: "", phone: "", idea: "" });
+    setForm({ name: "", email: "", phone: "", company: "", idea: "" });
     setErrors({});
     setSuccess(false);
     setLoading(false);
@@ -45,16 +46,30 @@ export default function LeadDialog({ open, onOpenChange, country }) {
     return Object.keys(e).length === 0;
   };
 
-  const onSubmit = (ev) => {
+  const onSubmit = async (ev) => {
     ev.preventDefault();
     if (!validate()) return;
     setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setSuccess(true);
+    try {
+      await api.post("/leads/submit", {
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        company: form.company.trim() || undefined,
+        message: form.idea.trim() || undefined,
+        tenant_slug: country?.slug,
+        tenant_brand: country?.brand_name,
+        tenant_domain: country?.domain,
+      });
       trackLeadSubmit();
+      setSuccess(true);
       toast.success("We'll be in touch within 1 working hour.");
-    }, 1000);
+    } catch (err) {
+      const msg = err?.response?.data?.detail || "Something went wrong. Please try again.";
+      toast.error(msg);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const onChange = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }));
@@ -92,6 +107,10 @@ export default function LeadDialog({ open, onOpenChange, country }) {
               <Field label="Phone" id="phone" error={errors.phone}>
                 <Input id="phone" value={form.phone} onChange={onChange("phone")}
                   placeholder="+44 7700 900123" className="h-11" data-testid="lead-phone" />
+              </Field>
+              <Field label="Company name (optional)" id="company">
+                <Input id="company" value={form.company} onChange={onChange("company")}
+                  placeholder="Acme Ltd" className="h-11" data-testid="lead-company" />
               </Field>
               <Field label="Tell us about your company (optional)" id="idea">
                 <Textarea id="idea" value={form.idea} onChange={onChange("idea")}

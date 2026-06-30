@@ -1,9 +1,14 @@
 import React from "react";
 import { motion, useScroll, useMotionValueEvent } from "framer-motion";
 import { Button } from "../ui/button";
-import { ArrowRight, Menu } from "lucide-react";
+import { ArrowRight, Menu, LayoutDashboard } from "lucide-react";
 import Logo from "../../lib/Logo";
 import MobileMenu from "./MobileMenu";
+import { SELF_REGISTRATION_URL } from "../../lib/channels";
+
+// Advisor photo — circular thumbnail next to the "Advisor" header button.
+const ADVISOR_PHOTO =
+  "https://customer-assets.emergentagent.com/job_easy-uk-register/artifacts/2g098d5f_image.png";
 
 const navItems = [
   { label: "How it works", href: "#how-it-works" },
@@ -14,7 +19,7 @@ const navItems = [
   { label: "FAQ", href: "#faq" },
 ];
 
-export default function Header({ country, onCTAClick }) {
+export default function Header({ country, onCTAClick, onAdvisorClick }) {
   const [scrolled, setScrolled] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const { scrollY } = useScroll();
@@ -33,8 +38,8 @@ export default function Header({ country, onCTAClick }) {
             : "bg-transparent border-b border-transparent"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <a href="#top" className="flex items-center gap-2" data-testid="logo-link">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
+          <a href="#top" className="flex items-center gap-2 shrink-0" data-testid="logo-link">
             <Logo
               brandName={country.brand_name}
               abbreviation={country.abbreviation}
@@ -44,7 +49,7 @@ export default function Header({ country, onCTAClick }) {
             />
           </a>
 
-          <nav className="hidden md:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-7">
             {navItems.map((item) => (
               <a
                 key={item.href}
@@ -57,7 +62,31 @@ export default function Header({ country, onCTAClick }) {
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2">
+            <a
+              href={SELF_REGISTRATION_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="h-9 px-3.5 inline-flex items-center gap-1.5 rounded-full border border-neutral-200 bg-white text-[12.5px] font-medium text-neutral-800 hover:border-neutral-400 hover:text-neutral-950 transition-colors"
+              data-testid="header-self-registration"
+              title="Open your B2B Hub self-registration portal"
+            >
+              <LayoutDashboard className="h-3.5 w-3.5" />
+              Portal
+            </a>
+            <button
+              type="button"
+              onClick={onAdvisorClick}
+              className="h-9 pl-1 pr-3.5 inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white text-[12.5px] font-medium text-neutral-900 hover:border-sky-400 hover:bg-sky-50 transition-colors"
+              data-testid="header-advisor-button"
+            >
+              <img
+                src={ADVISOR_PHOTO}
+                alt="Advisor"
+                className="h-7 w-7 rounded-full object-cover border border-white shadow-[0_2px_6px_-2px_rgba(0,0,0,0.18)]"
+              />
+              Advisor
+            </button>
             <Button
               onClick={onCTAClick}
               className="h-9 px-4 text-white rounded-full text-[13px] font-medium hover:opacity-90"
@@ -85,6 +114,7 @@ export default function Header({ country, onCTAClick }) {
         onClose={() => setOpen(false)}
         country={country}
         onCTAClick={onCTAClick}
+        onAdvisorClick={onAdvisorClick}
       />
     </>
   );

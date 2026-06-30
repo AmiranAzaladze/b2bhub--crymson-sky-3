@@ -1,8 +1,9 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ArrowUpRight, MessageCircle, Send } from "lucide-react";
+import { X, ArrowUpRight, MessageCircle, Send, CalendarCheck2, LayoutDashboard } from "lucide-react";
 import { Button } from "../ui/button";
 import { BrandMark } from "../../lib/Logo";
+import { WHATSAPP_HREF, TELEGRAM_URL, SELF_REGISTRATION_URL } from "../../lib/channels";
 
 const navItems = [
   { label: "How it works", href: "#how-it-works" },
@@ -12,11 +13,7 @@ const navItems = [
   { label: "FAQ", href: "#faq" },
 ];
 
-const WHATSAPP_NUMBER = "+4412345678";
-const WHATSAPP_HREF = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}`;
-const TELEGRAM_URL = "https://t.me/B2BHub_inbox_bot";
-
-export default function MobileMenu({ open, onClose, country, onCTAClick }) {
+export default function MobileMenu({ open, onClose, country, onCTAClick, onAdvisorClick }) {
   // Lock body scroll while open
   React.useEffect(() => {
     if (!open) return;
@@ -155,6 +152,37 @@ export default function MobileMenu({ open, onClose, country, onCTAClick }) {
                   <span className="h-1.5 w-1.5 rounded-full bg-green-500 live-dot" />
                   Live · 1,247 formed this month
                 </div>
+              </motion.div>
+
+              {/* Advisor + Portal quick actions */}
+              <motion.div
+                variants={{ hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.4 }}
+                className="mt-4 grid grid-cols-2 gap-2.5"
+              >
+                <button
+                  type="button"
+                  onClick={() => { onClose(); onAdvisorClick?.(); }}
+                  className="flex items-center gap-2.5 px-3 py-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-all text-left"
+                  data-testid="mobile-menu-advisor"
+                >
+                  <span className="h-8 w-8 rounded-full grid place-items-center bg-sky-500/90 shrink-0">
+                    <CalendarCheck2 className="h-3.5 w-3.5 text-white" />
+                  </span>
+                  <span className="font-display font-semibold text-[14px] leading-tight">Talk to<br /><span className="font-mono text-[11px] font-normal text-white/55">Advisor</span></span>
+                </button>
+                <a
+                  href={SELF_REGISTRATION_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2.5 px-3 py-3 rounded-xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/30 transition-all"
+                  data-testid="mobile-menu-portal"
+                >
+                  <span className="h-8 w-8 rounded-full grid place-items-center bg-white/10 shrink-0">
+                    <LayoutDashboard className="h-3.5 w-3.5 text-white" />
+                  </span>
+                  <span className="font-display font-semibold text-[14px] leading-tight">Self<br /><span className="font-mono text-[11px] font-normal text-white/55">registration</span></span>
+                </a>
               </motion.div>
 
               {/* Contact channels */}
