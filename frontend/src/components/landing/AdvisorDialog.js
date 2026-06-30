@@ -11,7 +11,7 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
-import { ArrowRight, CalendarCheck2, CheckCircle2, Loader2, Send, Sparkles, ExternalLink } from "lucide-react";
+import { ArrowRight, CalendarCheck2, CheckCircle2, Loader2, Send, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import api from "../../api/client";
 import { trackLeadSubmit } from "../../lib/analytics";
@@ -243,8 +243,7 @@ export default function AdvisorDialog({ open, onOpenChange, country }) {
               </Button>
 
               <div className="pt-4 border-t border-neutral-200">
-                <div className="flex items-center gap-1.5 mb-3">
-                  <Sparkles className="h-3.5 w-3.5 text-neutral-500" />
+                <div className="mb-3">
                   <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-500">
                     Prefer chat? Scan to message us
                   </span>

@@ -17,7 +17,6 @@ import {
   Shield,
   Users,
   XCircle,
-  Sparkles,
 } from "lucide-react";
 import { trackNameCheck } from "../../lib/analytics";
 
@@ -116,7 +115,6 @@ export default function Hero({ country, hero, b2bhub, onCTAClick }) {
               data-testid="name-checker-form"
             >
               <div className="flex items-center gap-2 mb-2">
-                <Sparkles className="h-3.5 w-3.5 text-neutral-500" />
                 <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-neutral-500">
                   Free company name check
                 </span>

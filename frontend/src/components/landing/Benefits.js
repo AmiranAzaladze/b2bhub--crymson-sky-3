@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import * as LucideIcons from "lucide-react";
-import { Sparkles } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export default function Benefits({ data }) {
   if (!data) return null;
@@ -29,7 +29,7 @@ export default function Benefits({ data }) {
 
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 md:gap-6">
           {(data.items || []).map((b, i) => {
-            const Icon = LucideIcons[b.icon] || LucideIcons.Sparkles;
+            const Icon = LucideIcons[b.icon] || LucideIcons.Star;
             return (
               <motion.div
                 key={b.title}
@@ -72,7 +72,7 @@ export default function Benefits({ data }) {
             data-testid="benefits-cta"
           >
             <div className="flex items-center gap-4">
-              <Sparkles className="h-5 w-5 text-white shrink-0" />
+              <ArrowRight className="h-5 w-5 text-white shrink-0" />
               <div>
                 <div className="font-display text-[20px] md:text-[24px] font-semibold tracking-tight">
                   {data.cta_text}

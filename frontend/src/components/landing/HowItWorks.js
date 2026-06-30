@@ -28,7 +28,7 @@ export default function HowItWorks({ data }) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-neutral-200 border border-neutral-200 rounded-2xl overflow-hidden">
           {(data.steps || []).map((s, i) => {
-            const Icon = LucideIcons[s.icon] || LucideIcons.Sparkles;
+            const Icon = LucideIcons[s.icon] || LucideIcons.Star;
             return (
               <motion.div
                 key={s.n + s.title}

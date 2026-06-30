@@ -646,7 +646,7 @@ function ContentEditor({ content, updateContent, updateContentRaw }) {
           <ListEditor
             items={c.how_it_works?.steps || []}
             onChange={(arr) => updateContent("how_it_works", { steps: arr })}
-            makeNew={() => ({ n: "0X", icon: "Sparkles", title: "", body: "", tag: "" })}
+            makeNew={() => ({ n: "0X", icon: "Star", title: "", body: "", tag: "" })}
             renderItem={(it, patch) => (
               <div className="space-y-2">
                 <div className="grid grid-cols-3 gap-2">
@@ -710,7 +710,7 @@ function ContentEditor({ content, updateContent, updateContentRaw }) {
           <ListEditor
             items={c.benefits?.items || []}
             onChange={(arr) => updateContent("benefits", { items: arr })}
-            makeNew={() => ({ icon: "Sparkles", title: "", body: "", span: "md:col-span-4" })}
+            makeNew={() => ({ icon: "Star", title: "", body: "", span: "md:col-span-4" })}
             renderItem={(it, patch) => (
               <div className="space-y-2">
                 <div className="grid grid-cols-3 gap-2">
