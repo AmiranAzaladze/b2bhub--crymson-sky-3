@@ -77,6 +77,19 @@ Addresses the SEOptimer/Seobility To-Do list reported by the user.
 - Smoke-tested via curl + Playwright on `/preview/uk` — confirmed 1 h1, correct title match,
   and 6 internal nav links present in raw HTML.
 
+## Blog Tenant-Resolution Fix + Social Media Links (Feb 2026)
+
+**BUG FIX — Romania blog was empty on production:**
+- Root cause: `Blog.js` line 27 and `BlogSection.js` line 20 called `GET /api/public/blog` with **no query string** whenever `readTenantSlug()` returned null (i.e. on production custom domains without `/preview/` in the URL). Backend then couldn't resolve the tenant (the `Host` header on Railway is the Railway internal domain, not the custom domain) and correctly returned `{posts: []}`.
+- Fix: both files now ALWAYS send an identifier — `?tenant=X` when a preview slug is present, else `?host=<window.location.hostname>` (same pattern the landing endpoint already used).
+- Seeded a Romania blog post (`setting-up-in-romania-2026`) into the preview DB to validate the fix.
+
+**FEATURE — Social media links per landing:**
+- Added a new **Social** tab in `AdminCountryEdit.js`, between Content and SEO. Six URL inputs bound to `content.footer.social.{x,instagram,youtube,linkedin,facebook,tiktok}`.
+- `Footer.js` extended with YouTube (Lucide) + TikTok (inline SVG). All 6 icons render conditionally — empty URL = hidden icon.
+- `Fields.js` `Field` component now supports a `placeholder` prop (backwards-compatible).
+- Verified by testing agent (iteration_7) — all 9 test scenarios pass on both preview + admin.
+
 ## Sparkles Icon Purge (Feb 2026)
 User explicitly requested removal of all sparkle/AI-style icons from every surface.
 
