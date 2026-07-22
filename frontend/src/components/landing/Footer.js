@@ -1,11 +1,18 @@
 import React from "react";
-import { Linkedin, Heart, Instagram, Facebook } from "lucide-react";
+import { Linkedin, Heart, Instagram, Facebook, Youtube } from "lucide-react";
 import { BrandMark } from "../../lib/Logo";
 
 // X (Twitter) icon — official rebrand. Lucide doesn't ship it yet, so inline SVG.
 const XIcon = (props) => (
   <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" {...props}>
     <path d="M18.244 2H21.5l-7.5 8.57L23 22h-6.91l-4.91-6.39L5.4 22H2.144l8.01-9.15L1.5 2h7.09l4.43 5.86L18.244 2Zm-1.21 18h1.91L7.06 4H5.04l11.994 16Z" />
+  </svg>
+);
+
+// TikTok icon — inline SVG (lucide doesn't ship it either).
+const TikTokIcon = (props) => (
+  <svg viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" {...props}>
+    <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.2a8.16 8.16 0 0 0 4.77 1.52V6.27a4.79 4.79 0 0 1-1.84-.58Z" />
   </svg>
 );
 
@@ -41,12 +48,14 @@ export default function Footer({ country, data }) {
               </address>
             )}
 
-            <div className="mt-8 flex items-center gap-3">
+            <div className="mt-8 flex items-center gap-3 flex-wrap">
               {[
                 { Icon: XIcon, key: "x", label: "X (Twitter)", url: data?.social?.x },
                 { Icon: Instagram, key: "instagram", label: "Instagram", url: data?.social?.instagram },
                 { Icon: Facebook, key: "facebook", label: "Facebook", url: data?.social?.facebook },
                 { Icon: Linkedin, key: "linkedin", label: "LinkedIn", url: data?.social?.linkedin },
+                { Icon: Youtube, key: "youtube", label: "YouTube", url: data?.social?.youtube },
+                { Icon: TikTokIcon, key: "tiktok", label: "TikTok", url: data?.social?.tiktok },
               ]
                 .filter(({ url }) => url && url.trim())
                 .map(({ Icon, key, label, url }) => (

@@ -17,8 +17,10 @@ export default function BlogSection({ country, tenant }) {
   React.useEffect(() => {
     (async () => {
       try {
-        const params = tenant ? `?tenant=${tenant}&limit=3` : "?limit=3";
-        const { data } = await api.get(`/public/blog${params}`);
+        // Always pass a tenant identifier. On production custom domains the
+        // browser hostname is what resolves the tenant server-side.
+        const base = tenant ? `?tenant=${tenant}` : `?host=${window.location.hostname}`;
+        const { data } = await api.get(`/public/blog${base}&limit=3`);
         setPosts(data.posts || []);
       } catch { /* swallow */ } finally { setLoaded(true); }
     })();

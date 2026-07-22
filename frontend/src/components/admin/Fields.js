@@ -5,7 +5,7 @@ import { Label } from "../../components/ui/label";
 import { Button } from "../../components/ui/button";
 import { Plus, Trash2, GripVertical } from "lucide-react";
 
-export const Field = ({ label, value, onChange, hint, multiline, type = "text", id, testid }) => (
+export const Field = ({ label, value, onChange, hint, multiline, type = "text", id, testid, placeholder }) => (
   <div>
     <div className="flex items-center justify-between mb-1.5">
       <Label htmlFor={id} className="text-[12px] font-medium text-zinc-300">{label}</Label>
@@ -20,6 +20,7 @@ export const Field = ({ label, value, onChange, hint, multiline, type = "text", 
         id={id}
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
         className="min-h-[80px] resize-none"
         data-testid={testid}
       />
@@ -29,6 +30,7 @@ export const Field = ({ label, value, onChange, hint, multiline, type = "text", 
         type={type}
         value={value ?? ""}
         onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
         className="h-10"
         data-testid={testid}
       />

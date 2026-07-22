@@ -1,0 +1,30 @@
+{
+  "summary": "Verified blog tenant-resolution fix and new Social admin tab + conditional footer icons. All scenarios PASS on preview.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": [],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "AdminCountryEdit.js also has legacy Social fields inside the Footer accordion under the Content tab (lines ~875-901: Instagram/X/Facebook/LinkedIn). This duplicates the new Social tab. Recommend removing the old block to avoid two sources of truth (they write to the same content.footer.social.* keys so state stays consistent, but it is confusing UX)."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "100%", "frontend": "100%"},
+  "seed_data_creation": "None (Romania post was pre-seeded by main agent)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Blog fix verified via API+UI. Social tab is between Content and SEO (tabs order: general, blog, content, social, seo, seo-tests, tracking, b2bhub, danger). Field data-testids are set directly on the <input> element (Fields.js line 25) — use selector input[data-testid='field-social-x'], NOT [data-testid='field-social-x'] input.",
+  "verified_scenarios": [
+    "Romania /preview/romania/blog renders 1 post card (blog-card-setting-up-in-romania-2026) inside public-blog-index",
+    "UK /preview/uk/blog still renders and Romania landing shows landing-blog-section",
+    "UK landing /preview/uk renders normally (footer present, no crash)",
+    "Admin CMS Social tab exists at data-testid='tab-social', positioned between content and seo (verified order)",
+    "6 social input fields exist with correct placeholders",
+    "Filling 3 fields (x, youtube, tiktok) persists after reload; only those 3 icons render in footer with target=_blank rel=noopener noreferrer; the other 3 testids are NOT in DOM",
+    "Filling all 6 renders all 6 icons in footer",
+    "Clearing all 6 removes all icons (social row gracefully empty)"
+  ]
+}

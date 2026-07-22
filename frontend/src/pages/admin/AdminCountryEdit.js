@@ -229,6 +229,7 @@ export default function AdminCountryEdit() {
               <TabsTrigger value="general" data-testid="tab-general" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">General</TabsTrigger>
               <TabsTrigger value="blog" data-testid="tab-blog" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Blog</TabsTrigger>
               <TabsTrigger value="content" data-testid="tab-content" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Content</TabsTrigger>
+              <TabsTrigger value="social" data-testid="tab-social" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Social</TabsTrigger>
               <TabsTrigger value="seo" data-testid="tab-seo" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">SEO</TabsTrigger>
               <TabsTrigger value="seo-tests" data-testid="tab-seo-tests" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">SEO tests</TabsTrigger>
               <TabsTrigger value="tracking" data-testid="tab-tracking" className="data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-50 text-zinc-400">Tracking</TabsTrigger>
@@ -309,6 +310,63 @@ export default function AdminCountryEdit() {
             {/* CONTENT */}
             <TabsContent value="content" className="space-y-5">
               <ContentEditor content={content || {}} updateContent={updateContent} updateContentRaw={updateContentRaw} />
+            </TabsContent>
+
+            {/* SOCIAL */}
+            <TabsContent value="social" className="space-y-5" data-testid="social-tab-content">
+              <Section
+                title="Social media links"
+                eyebrow="Footer icons"
+              >
+                <p className="text-[12.5px] text-zinc-500 -mt-1 mb-2">
+                  Paste the full profile URL for each network. Icons appear in the site footer
+                  only for the networks that have a URL — leave a field blank to hide that icon.
+                </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <Field
+                    label="X (Twitter)"
+                    value={content?.footer?.social?.x || ""}
+                    onChange={(v) => updateContent("footer", { social: { ...(content?.footer?.social || {}), x: v } })}
+                    placeholder="https://x.com/yourhandle"
+                    testid="field-social-x"
+                  />
+                  <Field
+                    label="Instagram"
+                    value={content?.footer?.social?.instagram || ""}
+                    onChange={(v) => updateContent("footer", { social: { ...(content?.footer?.social || {}), instagram: v } })}
+                    placeholder="https://instagram.com/yourhandle"
+                    testid="field-social-instagram"
+                  />
+                  <Field
+                    label="YouTube"
+                    value={content?.footer?.social?.youtube || ""}
+                    onChange={(v) => updateContent("footer", { social: { ...(content?.footer?.social || {}), youtube: v } })}
+                    placeholder="https://youtube.com/@yourchannel"
+                    testid="field-social-youtube"
+                  />
+                  <Field
+                    label="LinkedIn"
+                    value={content?.footer?.social?.linkedin || ""}
+                    onChange={(v) => updateContent("footer", { social: { ...(content?.footer?.social || {}), linkedin: v } })}
+                    placeholder="https://linkedin.com/company/your-page"
+                    testid="field-social-linkedin"
+                  />
+                  <Field
+                    label="Facebook"
+                    value={content?.footer?.social?.facebook || ""}
+                    onChange={(v) => updateContent("footer", { social: { ...(content?.footer?.social || {}), facebook: v } })}
+                    placeholder="https://facebook.com/yourpage"
+                    testid="field-social-facebook"
+                  />
+                  <Field
+                    label="TikTok"
+                    value={content?.footer?.social?.tiktok || ""}
+                    onChange={(v) => updateContent("footer", { social: { ...(content?.footer?.social || {}), tiktok: v } })}
+                    placeholder="https://tiktok.com/@yourhandle"
+                    testid="field-social-tiktok"
+                  />
+                </div>
+              </Section>
             </TabsContent>
 
             {/* SEO */}

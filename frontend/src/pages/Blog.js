@@ -24,10 +24,10 @@ export default function Blog() {
   React.useEffect(() => {
     (async () => {
       try {
-        const params = tenant ? `?tenant=${tenant}` : "";
+        const qs = tenant ? `?tenant=${tenant}` : `?host=${window.location.hostname}`;
         const [postsRes, landingRes] = await Promise.all([
-          api.get(`/public/blog${params}`),
-          api.get(`/public/landing${params || `?host=${window.location.hostname}`}`),
+          api.get(`/public/blog${qs}`),
+          api.get(`/public/landing${qs}`),
         ]);
         setPosts(postsRes.data.posts || []);
         setCountry(landingRes.data?.country || null);
